@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { BookOpen, LogOut, Settings, Shield, Search, Bookmark } from 'lucide-react'
+import { MobileNav } from '@/components/mobile-nav'
 import type { Database } from '@/types/database'
 
 type Profile = Database['public']['Tables']['profiles']['Row']
@@ -33,6 +34,11 @@ export function AppHeader({ profile }: { profile: Profile }) {
   return (
     <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="w-full max-w-5xl mx-auto flex h-14 items-center px-4">
+        <MobileNav
+          isAdmin={profile.role === 'admin'}
+          displayName={profile.display_name}
+          email={profile.email}
+        />
         <Link href="/" className="flex items-center gap-2 font-semibold">
           <BookOpen className="h-5 w-5" />
           <span>Bible Study</span>

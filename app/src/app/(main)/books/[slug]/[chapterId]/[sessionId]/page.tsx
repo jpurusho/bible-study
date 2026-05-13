@@ -8,6 +8,7 @@ import { SessionNavigation } from '@/components/session-navigation'
 import { UserNotes } from '@/components/user-notes'
 import { BookmarkButton } from '@/components/bookmark-button'
 import { DiscussionThread } from '@/components/discussion-thread'
+import { HighlightToolbar } from '@/components/highlight-toolbar'
 
 export default async function SessionPage({
   params,
@@ -103,7 +104,7 @@ export default async function SessionPage({
       )}
 
       <div className="flex gap-8">
-        <article className="flex-1 min-w-0">
+        <article className="flex-1 min-w-0" data-content-container>
           {session.content ? (
             <ContentRenderer html={session.content} />
           ) : (
@@ -120,6 +121,7 @@ export default async function SessionPage({
         )}
       </div>
 
+      {user && <HighlightToolbar sessionId={sessionId} userId={user.id} />}
       {user && <UserNotes sessionId={sessionId} userId={user.id} />}
 
       {user && (
