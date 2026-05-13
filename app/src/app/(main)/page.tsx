@@ -29,39 +29,38 @@ export default async function HomePage() {
       </section>
 
       {/* Books section */}
-      <section className="space-y-4">
-        <div className="flex items-center gap-2">
-          <BookOpen className="size-5 text-primary" />
-          <h2 className="text-xl font-semibold">Current Studies</h2>
-        </div>
+      <section className="space-y-5">
+        <h2 className="text-lg font-semibold text-center text-muted-foreground uppercase tracking-wider">
+          Current Studies
+        </h2>
 
         {books && books.length > 0 ? (
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="space-y-4 max-w-2xl mx-auto">
             {books.map((book) => (
-              <Link key={book.id} href={`/books/${book.slug}`}>
-                <Card className="group hover:shadow-md hover:border-primary/30 transition-all duration-200 cursor-pointer h-full">
-                  <CardHeader className="flex flex-row items-center gap-4">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 group-hover:bg-primary/20 transition-colors">
-                      <BookOpen className="h-6 w-6 text-primary" />
+              <Link key={book.id} href={`/books/${book.slug}`} className="block">
+                <Card className="group hover:shadow-lg hover:border-primary/40 transition-all duration-200 cursor-pointer">
+                  <CardHeader className="flex flex-row items-center gap-4 p-5">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 group-hover:bg-primary/15 transition-colors">
+                      <BookOpen className="h-7 w-7 text-primary" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <CardTitle className="text-lg group-hover:text-primary transition-colors">
+                      <CardTitle className="text-xl group-hover:text-primary transition-colors">
                         {book.title}
                       </CardTitle>
                       {book.description && (
-                        <CardDescription className="line-clamp-2 mt-0.5">
+                        <CardDescription className="mt-1 text-sm">
                           {book.description}
                         </CardDescription>
                       )}
                     </div>
-                    <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+                    <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
                   </CardHeader>
                 </Card>
               </Link>
             ))}
           </div>
         ) : (
-          <Card className="border-dashed">
+          <Card className="border-dashed max-w-2xl mx-auto">
             <CardContent className="flex flex-col items-center justify-center py-16 text-center">
               <div className="rounded-full bg-muted p-4 mb-4">
                 <BookOpen className="h-8 w-8 text-muted-foreground" />

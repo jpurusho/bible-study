@@ -37,7 +37,7 @@ export default async function AdminLayout({
   return (
     <div className="min-h-screen flex flex-col">
       <AppHeader profile={profile} />
-      <div className="flex-1 container mx-auto px-4 py-6 max-w-6xl">
+      <div className="flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="flex gap-6">
           <aside className="hidden md:block w-48 shrink-0">
             <nav className="space-y-1">
