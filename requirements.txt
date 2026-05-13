@@ -1,0 +1,19 @@
+Would like to build a new app for my bible study. The app should be completely on cloud, like the vercel app, backed by supabase or similar free cloud hosted db.
+
+Here are my requirements. I should be able to allow user with google login account. I as an admin will give access to their email id. I want a sign up page, where user will sign up using their account, and they should be able to access. I as an admin should allow which of those users are allowed to use the app. Eventually, I would like to open up, but for now, let's go with approved users.
+
+I have keynote files currently study notes,  images, audio files (mp3) and videos. I'm looking for ways to share them. We are doing book by book. Currently we are studying the book of acts chapter by chapter. Sometimes, I would like to have a quiz at the end of the chapter. I would like to be able to push the notes and any associated material, so all logged in users can see them. They should be able to make their own notes for the book/chapter, or globally, set their reading preference, theme etc. 
+
+I do not want to give a lot of open storage for the users, since I will be using all free infrastructure to build this app, but they can make limited notes, mostly text. 
+
+The weekly notes should appear in beautifully css styled representation, easy to read. The font/color should be can be set by admin. Eventually, we can expose some customization to per user setting as well. But they should be able to change font size, and theme, simply because not all themes are good for all users. 
+
+The pagination of app should be really good, easy to comeback to table of contents or top of sections for each chapter or book.  The experience should be smooth for both mobile users and desktop users. 
+
+We should have a good search feature to be able to search the content, using fuzzy or some form of semantic search, I don't want to use llm. 
+
+The interface should be clean, simple and very user friendly. This is just a bible study app. Have the abilty to show scripture portion for a given chapter or weekly session (if chapter spans multiple sessions). I will use the ESV API key in admin settings for that for all users. Users can choose their own translation as needed.
+
+I'm not sure how to engage in discussion for a given chapter or session with users. If this can be done, it will be a plus, a great addition.
+
+I have given my high level requirements. Please review, plan, and come up with any questions. Let me know what can be built. What is the technology stack to use for this. Is this feasible to do?
