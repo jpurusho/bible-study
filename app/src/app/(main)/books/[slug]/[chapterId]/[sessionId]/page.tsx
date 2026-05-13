@@ -5,6 +5,8 @@ import { ContentRenderer } from '@/components/content-renderer'
 import { MediaPlayer } from '@/components/media-player'
 import { TableOfContents } from '@/components/table-of-contents'
 import { SessionNavigation } from '@/components/session-navigation'
+import { UserNotes } from '@/components/user-notes'
+import { BookmarkButton } from '@/components/bookmark-button'
 
 export default async function SessionPage({
   params,
@@ -13,6 +15,8 @@ export default async function SessionPage({
 }) {
   const { slug, chapterId, sessionId } = await params
   const supabase = await createClient()
+
+  const { data: { user } } = await supabase.auth.getUser()
 
   const { data: book } = await supabase
     .from('books')
@@ -70,7 +74,10 @@ export default async function SessionPage({
       />
 
       <header className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight">{session.title}</h1>
+        <div className="flex items-start justify-between gap-4">
+          <h1 className="text-3xl font-bold tracking-tight">{session.title}</h1>
+          {user && <BookmarkButton sessionId={sessionId} userId={user.id} />}
+        </div>
         {session.scripture_reference && (
           <p className="text-lg text-primary/80 font-medium">{session.scripture_reference}</p>
         )}
@@ -101,6 +108,8 @@ export default async function SessionPage({
           </aside>
         )}
       </div>
+
+      {user && <UserNotes sessionId={sessionId} userId={user.id} />}
 
       <SessionNavigation
         baseUrl={`/books/${slug}/${chapterId}`}
