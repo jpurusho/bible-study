@@ -2,6 +2,8 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { AppHeader } from '@/components/app-header'
 import { AnnouncementsBanner } from '@/components/announcements-banner'
+import { BackToTop } from '@/components/back-to-top'
+import { AppFooter } from '@/components/app-footer'
 
 export default async function MainLayout({
   children,
@@ -32,6 +34,8 @@ export default async function MainLayout({
       <main className="flex-1 w-full max-w-5xl mx-auto px-4 py-6">
         {children}
       </main>
+      <AppFooter />
+      <BackToTop />
     </div>
   )
 }
