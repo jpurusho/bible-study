@@ -1,15 +1,24 @@
 'use client'
 
+import { useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { useSearchParams } from 'next/navigation'
+import { Separator } from '@/components/ui/separator'
 import { Suspense } from 'react'
 
 function LoginForm() {
   const searchParams = useSearchParams()
+  const router = useRouter()
   const error = searchParams.get('error')
   const redirectTo = searchParams.get('redirectTo') ?? '/'
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [authError, setAuthError] = useState<string | null>(null)
 
   async function signInWithGoogle() {
     const supabase = createClient()
@@ -21,6 +30,24 @@ function LoginForm() {
     })
   }
 
+  async function signInWithEmail(e: React.FormEvent) {
+    e.preventDefault()
+    setLoading(true)
+    setAuthError(null)
+
+    const supabase = createClient()
+    const { error } = await supabase.auth.signInWithPassword({ email, password })
+
+    if (error) {
+      setAuthError(error.message)
+      setLoading(false)
+      return
+    }
+
+    router.push(redirectTo)
+    router.refresh()
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
@@ -29,9 +56,9 @@ function LoginForm() {
           <CardDescription>Sign in to access study materials</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {error && (
+          {(error || authError) && (
             <p className="text-sm text-destructive text-center">
-              Authentication failed. Please try again.
+              {authError || 'Authentication failed. Please try again.'}
             </p>
           )}
           <Button
@@ -59,6 +86,45 @@ function LoginForm() {
             </svg>
             Sign in with Google
           </Button>
+
+          <div className="relative">
+            <Separator />
+            <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-2 text-xs text-muted-foreground">
+              or
+            </span>
+          </div>
+
+          <form onSubmit={signInWithEmail} className="space-y-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="admin@bible-study.local"
+                required
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                required
+              />
+            </div>
+            <Button type="submit" variant="outline" className="w-full" disabled={loading}>
+              {loading ? 'Signing in...' : 'Sign in with Email'}
+            </Button>
+          </form>
+
+          <p className="text-xs text-muted-foreground text-center">
+            Contact an admin to get access.
+          </p>
         </CardContent>
       </Card>
     </div>
