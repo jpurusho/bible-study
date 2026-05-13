@@ -6,7 +6,11 @@
 INSERT INTO auth.users (
   id, instance_id, email, encrypted_password, email_confirmed_at,
   raw_app_meta_data, raw_user_meta_data, created_at, updated_at,
-  confirmation_token, aud, role
+  confirmation_token, aud, role,
+  email_change, email_change_token_new, email_change_token_current,
+  phone, phone_change, phone_change_token,
+  recovery_token, reauthentication_token,
+  is_sso_user, is_anonymous
 ) VALUES (
   '00000000-0000-0000-0000-000000000001',
   '00000000-0000-0000-0000-000000000000',
@@ -15,7 +19,11 @@ INSERT INTO auth.users (
   now(),
   '{"provider":"email","providers":["email"]}',
   '{"display_name":"Admin User"}',
-  now(), now(), '', 'authenticated', 'authenticated'
+  now(), now(), '', 'authenticated', 'authenticated',
+  '', '', '',
+  '', '', '',
+  '', '',
+  false, false
 );
 
 INSERT INTO auth.identities (
