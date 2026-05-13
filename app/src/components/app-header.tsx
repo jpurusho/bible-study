@@ -12,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { BookOpen, LogOut, Settings, Shield, Search } from 'lucide-react'
+import { BookOpen, LogOut, Settings, Shield, Search, Bookmark } from 'lucide-react'
 import type { Database } from '@/types/database'
 
 type Profile = Database['public']['Tables']['profiles']['Row']
@@ -38,15 +38,15 @@ export function AppHeader({ profile }: { profile: Profile }) {
           <span>Bible Study</span>
         </Link>
 
-        <nav className="ml-6 flex items-center gap-4 text-sm">
+        <nav className="ml-6 hidden sm:flex items-center gap-4 text-sm">
           <Link href="/" className="text-muted-foreground hover:text-foreground transition-colors">
             Home
           </Link>
-          <Link href="/books" className="text-muted-foreground hover:text-foreground transition-colors">
-            Books
-          </Link>
           <Link href="/notes" className="text-muted-foreground hover:text-foreground transition-colors">
-            My Notes
+            Notes
+          </Link>
+          <Link href="/bookmarks" className="text-muted-foreground hover:text-foreground transition-colors">
+            Bookmarks
           </Link>
         </nav>
 
