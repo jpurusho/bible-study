@@ -39,7 +39,7 @@ export function UserNotes({ sessionId, userId }: UserNotesProps) {
         .maybeSingle()
 
       if (error) {
-        toast.error('Failed to load your note')
+        toast.error(`Failed to load note: ${error.message}`)
       } else if (data) {
         setContent(data.content ?? '')
         setNoteId(data.id)
@@ -62,7 +62,6 @@ export function UserNotes({ sessionId, userId }: UserNotesProps) {
         session_id: sessionId,
         scope: 'session' as const,
         content: text,
-        updated_at: new Date().toISOString(),
       }
 
       let error
@@ -70,12 +69,12 @@ export function UserNotes({ sessionId, userId }: UserNotesProps) {
       if (noteId) {
         ;({ error } = await supabase
           .from('user_notes')
-          .update({ content: text, updated_at: new Date().toISOString() })
+          .update({ content: text })
           .eq('id', noteId))
       } else {
         const result = await supabase
           .from('user_notes')
-          .upsert(payload, { onConflict: 'user_id,session_id,scope' })
+          .insert(payload)
           .select('id')
           .single()
 
@@ -87,7 +86,7 @@ export function UserNotes({ sessionId, userId }: UserNotesProps) {
 
       if (error) {
         setStatus('error')
-        toast.error('Failed to save note')
+        toast.error(`Failed to save note: ${error.message}`)
       } else {
         setStatus('saved')
       }
