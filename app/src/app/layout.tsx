@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/sonner"
+import { ServiceWorkerRegister } from "@/components/sw-register"
 import "./globals.css"
 
 const geistSans = Geist({
@@ -17,6 +18,12 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Bible Study",
   description: "Weekly Bible study materials, notes, and discussions",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Bible Study",
+  },
 }
 
 export default function RootLayout({
@@ -40,6 +47,7 @@ export default function RootLayout({
         >
           {children}
           <Toaster />
+          <ServiceWorkerRegister />
         </ThemeProvider>
       </body>
     </html>

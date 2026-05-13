@@ -205,6 +205,7 @@ GitHub Actions runs on every push to `main` and on PRs:
 
 - [x] **Phase 1:** Scaffolding, auth, database schema, admin users
 - [x] **Phase 2:** TipTap editor, content CRUD, content renderer, media embedding
-- [ ] **Phase 3:** Scripture display, user notes, theme system
-- [ ] **Phase 4:** Quizzes, discussions, announcements, search, bookmarks
-- [ ] **Phase 5:** PWA/offline, performance, accessibility, deploy
+- [x] **Phase 3:** User notes (auto-save), theme system (light/dark/sepia + font size), bookmarks
+- [x] **Phase 4:** Quizzes (builder + taker), discussions (threaded), announcements, full-text search, highlights
+- [x] **Phase 5:** Mobile nav, loading skeletons, error handling, back-to-top, footer
+- [ ] **Phase 6:** PWA/offline, production deploy (Vercel + Supabase Cloud)
