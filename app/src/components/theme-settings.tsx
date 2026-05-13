@@ -91,7 +91,6 @@ export function ThemeSettings() {
   const [fontSize, setFontSize] = useState<FontSize>('medium')
   const [mounted, setMounted] = useState(false)
 
-  // Load font size from localStorage on mount
   useEffect(() => {
     setMounted(true)
     const stored = localStorage.getItem(FONT_SIZE_KEY) as FontSize | null

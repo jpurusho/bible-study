@@ -106,8 +106,9 @@ export function DiscussionThread({ sessionId, userId, userRole }: DiscussionThre
   }, [sessionId, supabase])
 
   useEffect(() => {
-    fetchPosts()
-  }, [fetchPosts])
+    void fetchPosts()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sessionId])
 
   async function handleSubmitComment() {
     const trimmed = newComment.trim()

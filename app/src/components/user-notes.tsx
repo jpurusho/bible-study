@@ -1,12 +1,11 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { ChevronDown, ChevronRight, StickyNote, Loader2, Check, AlertCircle, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
-import { cn } from '@/lib/utils'
 
 interface UserNotesProps {
   sessionId: string
@@ -22,7 +21,7 @@ export function UserNotes({ sessionId, userId }: UserNotesProps) {
   const [status, setStatus] = useState<SaveStatus>('idle')
   const [isLoading, setIsLoading] = useState(false)
   const debounceRef = useRef<NodeJS.Timeout | null>(null)
-  const supabase = useRef(createClient()).current
+  const supabase = useMemo(() => createClient(), [])
 
   const CHARACTER_LIMIT = 5000
 

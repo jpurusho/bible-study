@@ -1,11 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
-import { Plus, Eye, EyeOff } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Eye, EyeOff } from 'lucide-react'
 import { QuizBuilder } from './quiz-builder'
-import type { Database } from '@/types/database'
-
-type Quiz = Database['public']['Tables']['quizzes']['Row']
 
 export default async function AdminQuizzesPage() {
   const supabase = await createClient()
@@ -64,11 +60,11 @@ export default async function AdminQuizzesPage() {
                   </p>
                 )}
                 <p className="text-xs text-muted-foreground mt-1">
-                  {quiz.session_id && (quiz as any).sessions?.title && (
-                    <span>Session: {(quiz as any).sessions.title}</span>
+                  {quiz.session_id && (quiz as unknown as { sessions: { title: string } | null }).sessions?.title && (
+                    <span>Session: {(quiz as unknown as { sessions: { title: string } }).sessions.title}</span>
                   )}
-                  {quiz.chapter_id && (quiz as any).chapters?.title && (
-                    <span>Chapter: {(quiz as any).chapters.title}</span>
+                  {quiz.chapter_id && (quiz as unknown as { chapters: { title: string } | null }).chapters?.title && (
+                    <span>Chapter: {(quiz as unknown as { chapters: { title: string } }).chapters.title}</span>
                   )}
                   {!quiz.session_id && !quiz.chapter_id && (
                     <span>No linked content</span>

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { Highlighter, Trash2, X } from 'lucide-react'
 import { toast } from 'sonner'
 import { createClient } from '@/lib/supabase/client'
@@ -49,7 +49,7 @@ export function HighlightToolbar({ sessionId, userId }: HighlightToolbarProps) {
   const [selectionOffsets, setSelectionOffsets] = useState<{ start: number; end: number } | null>(null)
   const toolbarRef = useRef<HTMLDivElement>(null)
   const contentContainerRef = useRef<HTMLElement | null>(null)
-  const supabase = useRef(createClient()).current
+  const supabase = useMemo(() => createClient(), [])
 
   // Fetch existing highlights on mount
   useEffect(() => {

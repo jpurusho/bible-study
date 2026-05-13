@@ -88,8 +88,9 @@ export function AnnouncementsBanner({ userId }: AnnouncementsBannerProps) {
   }, [userId])
 
   useEffect(() => {
-    fetchAnnouncements()
-  }, [fetchAnnouncements])
+    void fetchAnnouncements()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId])
 
   const handleDismiss = async () => {
     if (!announcement) return

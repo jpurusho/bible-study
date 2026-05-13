@@ -12,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { BookOpen, LogOut, Settings, Shield, Search, Bookmark } from 'lucide-react'
+import { BookOpen, LogOut, Settings, Shield, Search } from 'lucide-react'
 import { MobileNav } from '@/components/mobile-nav'
 import type { Database } from '@/types/database'
 

@@ -15,7 +15,6 @@ import {
 } from '@/components/ui/dialog'
 import { Plus, Trash2, GripVertical, Save } from 'lucide-react'
 import { toast } from 'sonner'
-import { cn } from '@/lib/utils'
 import type { Database } from '@/types/database'
 
 type Quiz = Database['public']['Tables']['quizzes']['Row']
@@ -78,7 +77,7 @@ export function QuizBuilder({ quiz, sessions, chapters }: Props) {
     setQuestions(updated.map((q, i) => ({ ...q, display_order: i + 1 })))
   }
 
-  function updateQuestion(index: number, field: keyof QuestionDraft, value: any) {
+  function updateQuestion(index: number, field: keyof QuestionDraft, value: string | string[] | number) {
     const updated = [...questions]
     updated[index] = { ...updated[index], [field]: value }
     setQuestions(updated)
@@ -195,8 +194,8 @@ export function QuizBuilder({ quiz, sessions, chapters }: Props) {
       setDialogOpen(false)
       resetForm()
       router.refresh()
-    } catch (err: any) {
-      toast.error(err.message || 'Failed to save quiz')
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Failed to save quiz')
     } finally {
       setSaving(false)
     }
