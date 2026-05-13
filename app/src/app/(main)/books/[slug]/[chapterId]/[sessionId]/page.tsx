@@ -7,6 +7,7 @@ import { TableOfContents } from '@/components/table-of-contents'
 import { SessionNavigation } from '@/components/session-navigation'
 import { UserNotes } from '@/components/user-notes'
 import { BookmarkButton } from '@/components/bookmark-button'
+import { DiscussionThread } from '@/components/discussion-thread'
 
 export default async function SessionPage({
   params,
@@ -17,6 +18,16 @@ export default async function SessionPage({
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
+
+  let userRole: 'user' | 'admin' = 'user'
+  if (user) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single()
+    if (profile) userRole = profile.role as 'user' | 'admin'
+  }
 
   const { data: book } = await supabase
     .from('books')
@@ -110,6 +121,10 @@ export default async function SessionPage({
       </div>
 
       {user && <UserNotes sessionId={sessionId} userId={user.id} />}
+
+      {user && (
+        <DiscussionThread sessionId={sessionId} userId={user.id} userRole={userRole} />
+      )}
 
       <SessionNavigation
         baseUrl={`/books/${slug}/${chapterId}`}
