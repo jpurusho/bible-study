@@ -12,8 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { BookOpen, LogOut, Settings, Shield, Search } from 'lucide-react'
-import { MobileNav } from '@/components/mobile-nav'
+import { BookOpen, LogOut, Settings, Shield, Search, Menu } from 'lucide-react'
 import type { Database } from '@/types/database'
 
 type Profile = Database['public']['Tables']['profiles']['Row']
@@ -34,17 +33,12 @@ export function AppHeader({ profile }: { profile: Profile }) {
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background">
       <div className="w-full max-w-4xl mx-auto flex h-14 items-center px-4 sm:px-6 lg:px-8">
-        <MobileNav
-          isAdmin={profile.role === 'admin'}
-          displayName={profile.display_name}
-          email={profile.email}
-        />
         <Link href="/" className="flex items-center gap-2 font-semibold text-primary">
           <BookOpen className="h-5 w-5" />
           <span>Bible Study</span>
         </Link>
 
-        <nav className="ml-6 hidden sm:flex items-center gap-4 text-sm">
+        <nav className="ml-6 flex items-center gap-4 text-sm">
           <Link href="/" className="text-muted-foreground hover:text-foreground transition-colors">
             Home
           </Link>
