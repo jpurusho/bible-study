@@ -28,12 +28,13 @@ export function MediaPlayer({ media }: { media: SessionMedia }) {
               {media.title}
             </div>
           )}
-          <div className="aspect-video rounded-xl overflow-hidden border border-border bg-muted">
+          <div className="relative w-full rounded-xl overflow-hidden border border-border bg-muted" style={{ paddingBottom: '56.25%' }}>
             <iframe
               src={`https://drive.google.com/file/d/${driveId}/preview`}
-              className="w-full h-full"
+              className="absolute inset-0 w-full h-full"
               allow="autoplay; encrypted-media"
               allowFullScreen
+              sandbox="allow-scripts allow-same-origin allow-popups"
               title={media.title || 'Video'}
             />
           </div>
