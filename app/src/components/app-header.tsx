@@ -3,16 +3,7 @@
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { Button } from '@/components/ui/button'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { BookOpen, LogOut, Settings, Shield, Search, Menu } from 'lucide-react'
+import { BookOpen, LogOut, Settings, Shield, Search } from 'lucide-react'
 import type { Database } from '@/types/database'
 
 type Profile = Database['public']['Tables']['profiles']['Row']
@@ -48,45 +39,31 @@ export function AppHeader({ profile }: { profile: Profile }) {
           <Link href="/bookmarks" className="text-muted-foreground hover:text-foreground transition-colors">
             Bookmarks
           </Link>
+          <Link href="/search" className="text-muted-foreground hover:text-foreground transition-colors">
+            <Search className="h-4 w-4" />
+          </Link>
         </nav>
 
-        <div className="ml-auto flex items-center gap-2">
-          <Link href="/search">
-            <Button variant="ghost" size="icon">
-              <Search className="h-4 w-4" />
-            </Button>
+        <div className="ml-auto flex items-center gap-3">
+          {profile.role === 'admin' && (
+            <Link href="/admin" className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
+              <Shield className="h-4 w-4" />
+              <span className="hidden sm:inline">Admin</span>
+            </Link>
+          )}
+          <Link href="/settings" className="text-muted-foreground hover:text-foreground transition-colors">
+            <Settings className="h-4 w-4" />
           </Link>
-
-          <DropdownMenu>
-            <DropdownMenuTrigger className="relative h-8 w-8 rounded-full cursor-pointer">
-              <Avatar className="h-8 w-8">
-                <AvatarImage src={profile.avatar_url ?? undefined} alt={profile.display_name ?? ''} />
-                <AvatarFallback>{initials}</AvatarFallback>
-              </Avatar>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="end">
-              <div className="flex flex-col space-y-1 p-2">
-                <p className="text-sm font-medium">{profile.display_name}</p>
-                <p className="text-xs text-muted-foreground">{profile.email}</p>
-              </div>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => router.push('/settings')}>
-                <Settings className="mr-2 h-4 w-4" />
-                Settings
-              </DropdownMenuItem>
-              {profile.role === 'admin' && (
-                <DropdownMenuItem onClick={() => router.push('/admin')}>
-                  <Shield className="mr-2 h-4 w-4" />
-                  Admin
-                </DropdownMenuItem>
-              )}
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleSignOut}>
-                <LogOut className="mr-2 h-4 w-4" />
-                Sign Out
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <button
+            onClick={handleSignOut}
+            className="text-muted-foreground hover:text-foreground transition-colors"
+            title="Sign Out"
+          >
+            <LogOut className="h-4 w-4" />
+          </button>
+          <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-medium text-primary">
+            {initials}
+          </div>
         </div>
       </div>
     </header>
