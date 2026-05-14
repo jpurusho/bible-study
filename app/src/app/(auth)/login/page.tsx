@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
@@ -14,10 +14,23 @@ function LoginForm() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const error = searchParams.get('error')
+  const code = searchParams.get('code')
   const redirectTo = searchParams.get('redirectTo') ?? '/'
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (code) {
+      const supabase = createClient()
+      supabase.auth.exchangeCodeForSession(code).then(({ error }) => {
+        if (!error) {
+          router.push('/')
+          router.refresh()
+        }
+      })
+    }
+  }, [code, router])
   const [authError, setAuthError] = useState<string | null>(null)
 
   async function signInWithGoogle() {
