@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Settings, Shield, Search } from 'lucide-react'
+import { Settings, Shield, Search, Home, Bookmark, StickyNote } from 'lucide-react'
 import { SignOutButton } from '@/components/sign-out-button'
 import type { Database } from '@/types/database'
 
@@ -19,17 +19,19 @@ export function AppHeader({ profile }: { profile: Profile }) {
         </Link>
 
         <nav className="ml-4 sm:ml-6 flex items-center gap-3 sm:gap-4 text-sm">
-          <Link href="/home" className="hidden sm:inline text-muted-foreground hover:text-foreground transition-colors">
-            Home
+          <Link href="/home" className="text-muted-foreground hover:text-foreground transition-colors" title="Home">
+            <Home className="h-4 w-4 sm:hidden" />
+            <span className="hidden sm:inline">Home</span>
           </Link>
-          <Link href="/notes" className="text-muted-foreground hover:text-foreground transition-colors">
+          <Link href="/notes" className="text-muted-foreground hover:text-foreground transition-colors" title="Notes">
+            <StickyNote className="h-4 w-4 sm:hidden" />
             <span className="hidden sm:inline">Notes</span>
-            <span className="sm:hidden text-xs">Notes</span>
           </Link>
-          <Link href="/bookmarks" className="hidden sm:inline text-muted-foreground hover:text-foreground transition-colors">
-            Bookmarks
+          <Link href="/bookmarks" className="text-muted-foreground hover:text-foreground transition-colors" title="Bookmarks">
+            <Bookmark className="h-4 w-4 sm:hidden" />
+            <span className="hidden sm:inline">Bookmarks</span>
           </Link>
-          <Link href="/search" className="text-muted-foreground hover:text-foreground transition-colors">
+          <Link href="/search" className="text-muted-foreground hover:text-foreground transition-colors" title="Search">
             <Search className="h-4 w-4" />
           </Link>
         </nav>
