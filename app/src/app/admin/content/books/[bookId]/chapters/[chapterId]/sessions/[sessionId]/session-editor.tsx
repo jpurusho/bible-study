@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { TiptapEditor } from '@/components/editor/tiptap-editor'
-import { Save, Plus, Trash2, Video, Music, Image as ImageIcon, FileText } from 'lucide-react'
+import { Save, Plus, Trash2, Video, Music, Image as ImageIcon, FileText, Code } from 'lucide-react'
 import { toast } from 'sonner'
 import type { Database } from '@/types/database'
 
@@ -22,6 +22,7 @@ export function SessionEditor({ session, initialMedia }: SessionEditorProps) {
   const [content, setContent] = useState(session.content ?? '')
   const [media, setMedia] = useState(initialMedia)
   const [saving, setSaving] = useState(false)
+  const [showSource, setShowSource] = useState(false)
   const supabase = createClient()
 
   const handleSaveContent = useCallback(async () => {
@@ -94,16 +95,31 @@ export function SessionEditor({ session, initialMedia }: SessionEditorProps) {
       <section className="space-y-3">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold">Study Notes</h2>
-          <Button onClick={handleSaveContent} disabled={saving}>
-            <Save className="size-4" />
-            {saving ? 'Saving...' : 'Save'}
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={() => setShowSource(!showSource)}>
+              <Code className="size-4" />
+              {showSource ? 'Visual' : 'Source'}
+            </Button>
+            <Button onClick={handleSaveContent} disabled={saving}>
+              <Save className="size-4" />
+              {saving ? 'Saving...' : 'Save'}
+            </Button>
+          </div>
         </div>
-        <TiptapEditor
-          content={content}
-          onChange={setContent}
-          placeholder="Write your study notes here..."
-        />
+        {showSource ? (
+          <textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            className="w-full min-h-[400px] p-4 font-mono text-sm border border-border rounded-lg bg-muted/30 focus:outline-none focus:ring-2 focus:ring-ring"
+            spellCheck={false}
+          />
+        ) : (
+          <TiptapEditor
+            content={content}
+            onChange={setContent}
+            placeholder="Write your study notes here..."
+          />
+        )}
       </section>
 
       <section className="space-y-3">
