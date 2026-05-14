@@ -40,7 +40,7 @@ export function MediaPlayer({ media }: { media: SessionMedia }) {
               <ExternalLink className="size-3" />
             </a>
           </div>
-          <div className="relative w-full rounded-xl overflow-hidden border border-border bg-muted aspect-[4/3] sm:aspect-video">
+          <div className="relative w-full rounded-xl overflow-hidden border border-border bg-muted aspect-square sm:aspect-video">
             <iframe
               src={`https://drive.google.com/file/d/${driveId}/preview`}
               className="absolute inset-0 w-full h-full"
