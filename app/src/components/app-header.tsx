@@ -1,22 +1,11 @@
-'use client'
-
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
-import { BookOpen, LogOut, Settings, Shield, Search } from 'lucide-react'
+import { BookOpen, Settings, Shield, Search } from 'lucide-react'
+import { SignOutButton } from '@/components/sign-out-button'
 import type { Database } from '@/types/database'
 
 type Profile = Database['public']['Tables']['profiles']['Row']
 
 export function AppHeader({ profile }: { profile: Profile }) {
-  const router = useRouter()
-
-  async function handleSignOut() {
-    const supabase = createClient()
-    await supabase.auth.signOut()
-    router.push('/login')
-  }
-
   const initials = profile.display_name
     ? profile.display_name.split(' ').map(n => n[0]).join('').toUpperCase()
     : profile.email[0].toUpperCase()
@@ -54,13 +43,7 @@ export function AppHeader({ profile }: { profile: Profile }) {
           <Link href="/settings" className="text-muted-foreground hover:text-foreground transition-colors">
             <Settings className="h-4 w-4" />
           </Link>
-          <button
-            onClick={handleSignOut}
-            className="text-muted-foreground hover:text-foreground transition-colors"
-            title="Sign Out"
-          >
-            <LogOut className="h-4 w-4" />
-          </button>
+          <SignOutButton />
           <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-medium text-primary">
             {initials}
           </div>
