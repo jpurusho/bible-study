@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import { Settings, Shield, Search, Home, Bookmark, StickyNote } from 'lucide-react'
 import { SignOutButton } from '@/components/sign-out-button'
-import { RefreshButton } from '@/components/refresh-button'
 import type { Database } from '@/types/database'
 
 type Profile = Database['public']['Tables']['profiles']['Row']
@@ -44,7 +43,6 @@ export function AppHeader({ profile }: { profile: Profile }) {
               <span className="hidden sm:inline">Admin</span>
             </Link>
           )}
-          <RefreshButton />
           <Link href="/settings" className="text-muted-foreground hover:text-foreground transition-colors">
             <Settings className="h-4 w-4" />
           </Link>
