@@ -31,7 +31,7 @@ export default async function BookPage({
 
   return (
     <div className="space-y-6">
-      <Breadcrumbs items={[{ label: 'Books', href: '/' }, { label: book.title }]} />
+      <Breadcrumbs items={[{ label: 'Books', href: '/home' }, { label: book.title }]} />
 
       <div>
         <h1 className="text-3xl font-bold tracking-tight">{book.title}</h1>

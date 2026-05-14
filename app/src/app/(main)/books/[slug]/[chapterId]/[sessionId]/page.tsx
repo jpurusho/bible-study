@@ -78,7 +78,7 @@ export default async function SessionPage({
     <div className="space-y-6">
       <Breadcrumbs
         items={[
-          { label: 'Books', href: '/' },
+          { label: 'Books', href: '/home' },
           { label: book.title, href: `/books/${slug}` },
           { label: `Ch. ${chapter.chapter_number}`, href: `/books/${slug}/${chapterId}` },
           { label: session.title },

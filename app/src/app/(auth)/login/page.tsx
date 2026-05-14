@@ -15,7 +15,7 @@ function LoginForm() {
   const router = useRouter()
   const error = searchParams.get('error')
   const code = searchParams.get('code')
-  const redirectTo = searchParams.get('redirectTo') ?? '/'
+  const redirectTo = searchParams.get('redirectTo') ?? '/home'
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -25,7 +25,7 @@ function LoginForm() {
       const supabase = createClient()
       supabase.auth.exchangeCodeForSession(code).then(({ error }) => {
         if (!error) {
-          router.push('/')
+          router.push('/home')
           router.refresh()
         }
       })

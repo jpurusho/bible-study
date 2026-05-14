@@ -41,7 +41,7 @@ export function MobileNav({ isAdmin, displayName, email }: MobileNavProps) {
   }
 
   const links = [
-    { href: '/', label: 'Home', icon: Home },
+    { href: '/home', label: 'Home', icon: Home },
     { href: '/notes', label: 'Notes', icon: StickyNote },
     { href: '/bookmarks', label: 'Bookmarks', icon: Bookmark },
     { href: '/search', label: 'Search', icon: Search },

@@ -42,7 +42,7 @@ export default async function ChapterPage({
     <div className="space-y-6">
       <Breadcrumbs
         items={[
-          { label: 'Books', href: '/' },
+          { label: 'Books', href: '/home' },
           { label: book.title, href: `/books/${slug}` },
           { label: `Chapter ${chapter.chapter_number}: ${chapter.title}` },
         ]}

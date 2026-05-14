@@ -44,7 +44,7 @@ export default async function QuizPage({
     <div className="space-y-6">
       <Breadcrumbs
         items={[
-          { label: 'Home', href: '/' },
+          { label: 'Home', href: '/home' },
           { label: 'Quizzes', href: '/quiz' },
           { label: quiz.title },
         ]}

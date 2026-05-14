@@ -9,7 +9,7 @@ interface BreadcrumbItem {
 export function Breadcrumbs({ items }: { items: BreadcrumbItem[] }) {
   return (
     <nav aria-label="Breadcrumb" className="flex items-center gap-1 text-sm text-muted-foreground">
-      <Link href="/" className="hover:text-foreground transition-colors">
+      <Link href="/home" className="hover:text-foreground transition-colors">
         <Home className="size-4" />
       </Link>
       {items.map((item, i) => (
