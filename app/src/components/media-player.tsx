@@ -1,5 +1,5 @@
 import type { Database } from '@/types/database'
-import { Video, Music, FileText, Image as ImageIcon } from 'lucide-react'
+import { Video, Music, FileText, Image as ImageIcon, ExternalLink } from 'lucide-react'
 
 type SessionMedia = Database['public']['Tables']['session_media']['Row']
 
@@ -20,21 +20,32 @@ export function MediaPlayer({ media }: { media: SessionMedia }) {
   if (media.type === 'video') {
     const driveId = extractGoogleDriveId(media.url)
     if (driveId) {
+      const driveLink = `https://drive.google.com/file/d/${driveId}/view`
       return (
         <div className="space-y-2">
-          {media.title && (
-            <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-              <Video className="size-4" />
-              {media.title}
-            </div>
-          )}
-          <div className="relative w-full rounded-xl overflow-hidden border border-border bg-muted" style={{ paddingBottom: '56.25%' }}>
+          <div className="flex items-center justify-between">
+            {media.title && (
+              <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                <Video className="size-4" />
+                {media.title}
+              </div>
+            )}
+            <a
+              href={driveLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1 text-xs text-primary hover:underline"
+            >
+              Open in Drive
+              <ExternalLink className="size-3" />
+            </a>
+          </div>
+          <div className="relative w-full rounded-xl overflow-hidden border border-border bg-muted aspect-[4/3] sm:aspect-video">
             <iframe
               src={`https://drive.google.com/file/d/${driveId}/preview`}
               className="absolute inset-0 w-full h-full"
-              allow="autoplay; encrypted-media"
+              allow="autoplay; encrypted-media; fullscreen"
               allowFullScreen
-              sandbox="allow-scripts allow-same-origin allow-popups"
               title={media.title || 'Video'}
             />
           </div>
@@ -49,11 +60,11 @@ export function MediaPlayer({ media }: { media: SessionMedia }) {
             {media.title}
           </div>
         )}
-        <div className="aspect-video rounded-xl overflow-hidden border border-border bg-muted">
+        <div className="relative w-full rounded-xl overflow-hidden border border-border bg-muted aspect-[4/3] sm:aspect-video">
           <iframe
             src={media.url}
-            className="w-full h-full"
-            allow="autoplay; encrypted-media"
+            className="absolute inset-0 w-full h-full"
+            allow="autoplay; encrypted-media; fullscreen"
             allowFullScreen
             title={media.title || 'Video'}
           />
@@ -69,15 +80,27 @@ export function MediaPlayer({ media }: { media: SessionMedia }) {
       : media.url
 
     if (driveId) {
+      const driveLink = `https://drive.google.com/file/d/${driveId}/view`
       return (
         <div className="space-y-2">
-          {media.title && (
-            <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-              <Music className="size-4" />
-              {media.title}
-            </div>
-          )}
-          <div className="rounded-xl overflow-hidden border border-border bg-muted h-20">
+          <div className="flex items-center justify-between">
+            {media.title && (
+              <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                <Music className="size-4" />
+                {media.title}
+              </div>
+            )}
+            <a
+              href={driveLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1 text-xs text-primary hover:underline"
+            >
+              Open in Drive
+              <ExternalLink className="size-3" />
+            </a>
+          </div>
+          <div className="rounded-xl overflow-hidden border border-border bg-muted h-24">
             <iframe
               src={audioSrc}
               className="w-full h-full"

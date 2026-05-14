@@ -1,36 +1,9 @@
 'use client'
 
-/**
- * Theme Settings Component
- *
- * CSS to add to src/app/globals.css for sepia support:
- *
- * .sepia {
- *   --background: 44 30% 96%;
- *   --foreground: 30 20% 15%;
- *   --card: 40 33% 94%;
- *   --card-foreground: 30 20% 15%;
- *   --popover: 40 33% 94%;
- *   --popover-foreground: 30 20% 15%;
- *   --primary: 30 60% 40%;
- *   --primary-foreground: 44 30% 96%;
- *   --secondary: 35 25% 88%;
- *   --secondary-foreground: 30 20% 20%;
- *   --muted: 38 20% 90%;
- *   --muted-foreground: 30 15% 40%;
- *   --accent: 35 25% 88%;
- *   --accent-foreground: 30 20% 20%;
- *   --destructive: 0 72% 51%;
- *   --border: 35 20% 82%;
- *   --input: 35 20% 82%;
- *   --ring: 30 60% 40%;
- * }
- */
-
 import { useTheme } from 'next-themes'
 import { useEffect, useState } from 'react'
 import { Sun, Moon, Palette, Type } from 'lucide-react'
-
+import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -40,6 +13,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
+import { toast } from 'sonner'
 
 const FONT_SIZE_KEY = 'bible-study-font-size'
 
@@ -124,14 +98,33 @@ export function ThemeSettings() {
     }
   }, [])
 
-  // Persist font size changes
-  function handleFontSizeChange(size: FontSize) {
+  async function saveThemeToProfile(newTheme: string) {
+    setTheme(newTheme)
+    const supabase = createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (user) {
+      await supabase
+        .from('profiles')
+        .update({ theme: { mode: newTheme, fontSize } })
+        .eq('id', user.id)
+    }
+  }
+
+  async function handleFontSizeChange(size: FontSize) {
     setFontSize(size)
     localStorage.setItem(FONT_SIZE_KEY, size)
     document.documentElement.style.setProperty('--font-size-base', fontSizeMap[size])
+
+    const supabase = createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (user) {
+      await supabase
+        .from('profiles')
+        .update({ theme: { mode: theme || 'system', fontSize: size } })
+        .eq('id', user.id)
+    }
   }
 
-  // Prevent hydration mismatch
   if (!mounted) {
     return null
   }
@@ -141,11 +134,10 @@ export function ThemeSettings() {
       <CardHeader>
         <CardTitle>Appearance</CardTitle>
         <CardDescription>
-          Customize how the app looks and feels.
+          Customize how the app looks and feels. Your preferences sync across devices.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* Theme Selection */}
         <div className="space-y-3">
           <h3 className="flex items-center gap-2 text-sm font-medium">
             <Sun className="size-4" />
@@ -159,7 +151,7 @@ export function ThemeSettings() {
                 <button
                   key={t.value}
                   type="button"
-                  onClick={() => setTheme(t.value)}
+                  onClick={() => saveThemeToProfile(t.value)}
                   className={cn(
                     'group relative flex flex-col items-center gap-2 rounded-lg border p-3 transition-all',
                     isActive
@@ -167,7 +159,6 @@ export function ThemeSettings() {
                       : 'border-border hover:border-primary/50'
                   )}
                 >
-                  {/* Preview Card */}
                   <div
                     className={cn(
                       'flex h-16 w-full flex-col items-start justify-between rounded-md border p-2',
@@ -180,12 +171,10 @@ export function ThemeSettings() {
                       <div className={cn('h-1 w-3/4 rounded-full', t.previewAccent)} />
                     </div>
                   </div>
-                  {/* Label */}
                   <span className="flex items-center gap-1.5 text-xs font-medium">
                     <Icon className="size-3" />
                     {t.label}
                   </span>
-                  {/* Active indicator */}
                   {isActive && (
                     <div className="absolute -top-1 -right-1 size-3 rounded-full bg-primary" />
                   )}
@@ -195,7 +184,6 @@ export function ThemeSettings() {
           </div>
         </div>
 
-        {/* Font Size Selection */}
         <div className="space-y-3">
           <h3 className="flex items-center gap-2 text-sm font-medium">
             <Type className="size-4" />
@@ -213,7 +201,6 @@ export function ThemeSettings() {
               </Button>
             ))}
           </div>
-          {/* Font size preview */}
           <div className="rounded-md border bg-muted/50 p-3">
             <p
               className="text-foreground transition-all"
