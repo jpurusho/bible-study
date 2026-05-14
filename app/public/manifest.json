@@ -1,7 +1,7 @@
 {
-  "name": "Bible Study",
-  "short_name": "Bible Study",
-  "description": "Weekly Bible study materials, notes, and discussions",
+  "name": "CCISR Bible Study",
+  "short_name": "CCISR Bible",
+  "description": "CCI San Ramon - Weekly Bible study materials, notes, and discussions",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

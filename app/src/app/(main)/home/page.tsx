@@ -20,8 +20,8 @@ export default async function HomePage() {
           <Sparkles className="size-4" />
           Weekly Bible Study
         </div>
-        <h1 className="text-4xl sm:text-5xl font-bold tracking-tight bg-gradient-to-br from-foreground to-foreground/60 bg-clip-text text-transparent">
-          Welcome to Bible Study
+        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight bg-gradient-to-br from-foreground to-foreground/60 bg-clip-text text-transparent">
+          Welcome to CCI San Ramon Bible Study
         </h1>
         <p className="text-lg text-muted-foreground max-w-xl mx-auto">
           Access your weekly study materials, take personal notes, participate in discussions, and grow together.

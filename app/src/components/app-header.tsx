@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { BookOpen, Settings, Shield, Search } from 'lucide-react'
+import { Settings, Shield, Search } from 'lucide-react'
 import { SignOutButton } from '@/components/sign-out-button'
 import type { Database } from '@/types/database'
 
@@ -14,8 +14,9 @@ export function AppHeader({ profile }: { profile: Profile }) {
     <header className="sticky top-0 z-50 border-b border-border bg-background">
       <div className="w-full max-w-4xl mx-auto flex h-14 items-center px-4 sm:px-6 lg:px-8">
         <Link href="/home" className="flex items-center gap-2 font-semibold text-primary">
-          <BookOpen className="h-5 w-5" />
-          <span>Bible Study</span>
+          <img src="/icons/logo.png" alt="" className="h-7 w-7 rounded-full" />
+          <span className="hidden sm:inline">CCISR Bible Study</span>
+          <span className="sm:hidden">CCISR</span>
         </Link>
 
         <nav className="ml-6 flex items-center gap-4 text-sm">

@@ -16,13 +16,13 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "Bible Study",
-  description: "Weekly Bible study materials, notes, and discussions",
+  title: "CCISR Bible Study",
+  description: "CCI San Ramon - Weekly Bible study materials, notes, and discussions",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Bible Study",
+    title: "CCISR Bible Study",
   },
 }
 
