@@ -7,34 +7,41 @@ interface ContentRendererProps {
 
 export function ContentRenderer({ html, className }: ContentRendererProps) {
   return (
-    <div
-      className={cn(
-        'prose prose-neutral dark:prose-invert max-w-none',
-        // Pastel-themed headings
-        'prose-h1:text-primary prose-h1:text-2xl prose-h1:font-bold prose-h1:border-b prose-h1:border-primary/20 prose-h1:pb-2 prose-h1:mb-4',
-        'prose-h2:text-primary/90 prose-h2:text-xl prose-h2:font-semibold prose-h2:mt-8 prose-h2:mb-3',
-        'prose-h3:text-primary/80 prose-h3:text-lg prose-h3:font-medium prose-h3:mt-6 prose-h3:mb-2',
-        'prose-h4:text-primary/70 prose-h4:text-base prose-h4:font-medium',
-        // Body text
-        'prose-p:leading-7 prose-p:text-foreground/90',
-        'prose-li:text-foreground/90',
-        // Blockquote styling (scripture-like)
-        'prose-blockquote:border-l-primary/40 prose-blockquote:bg-primary/5 prose-blockquote:rounded-r-lg prose-blockquote:py-2 prose-blockquote:px-4 prose-blockquote:not-italic',
-        'prose-blockquote:text-foreground/80',
-        // Code blocks
-        'prose-pre:bg-muted prose-pre:border prose-pre:border-border prose-pre:rounded-xl',
-        'prose-code:text-primary prose-code:bg-primary/10 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md prose-code:before:content-none prose-code:after:content-none',
-        // Links
-        'prose-a:text-primary prose-a:underline-offset-2 prose-a:decoration-primary/40 hover:prose-a:decoration-primary',
-        // Images
-        'prose-img:rounded-xl prose-img:shadow-sm prose-img:border prose-img:border-border',
-        // Horizontal rule
-        'prose-hr:border-primary/20',
-        // Strong/emphasis
-        'prose-strong:text-foreground prose-strong:font-semibold',
-        className
-      )}
-      dangerouslySetInnerHTML={{ __html: html }}
-    />
+    <div className="rounded-2xl bg-card/50 border border-border/50 p-6 sm:p-8 shadow-sm">
+      <div
+        className={cn(
+          'prose prose-neutral dark:prose-invert max-w-none',
+          // Headings with pastel primary color
+          'prose-h1:text-primary prose-h1:text-2xl prose-h1:font-bold prose-h1:border-b prose-h1:border-primary/20 prose-h1:pb-3 prose-h1:mb-6',
+          'prose-h2:text-primary/90 prose-h2:text-xl prose-h2:font-semibold prose-h2:mt-10 prose-h2:mb-4',
+          'prose-h3:text-primary/80 prose-h3:text-lg prose-h3:font-medium prose-h3:mt-8 prose-h3:mb-3',
+          'prose-h4:text-primary/70 prose-h4:text-base prose-h4:font-medium prose-h4:mt-6',
+          // Body text — generous line height for readability
+          'prose-p:leading-8 prose-p:text-foreground/85 prose-p:mb-4',
+          'prose-li:text-foreground/85 prose-li:leading-7',
+          // Blockquotes styled like scripture passages
+          'prose-blockquote:border-l-4 prose-blockquote:border-l-primary/30',
+          'prose-blockquote:bg-primary/5 prose-blockquote:rounded-r-xl',
+          'prose-blockquote:py-3 prose-blockquote:px-5 prose-blockquote:my-6',
+          'prose-blockquote:not-italic prose-blockquote:text-foreground/80',
+          'prose-blockquote:shadow-sm',
+          // Code blocks
+          'prose-pre:bg-muted prose-pre:border prose-pre:border-border prose-pre:rounded-xl',
+          'prose-code:text-primary prose-code:bg-primary/8 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md prose-code:before:content-none prose-code:after:content-none',
+          // Links
+          'prose-a:text-primary prose-a:underline-offset-3 prose-a:decoration-primary/30 hover:prose-a:decoration-primary prose-a:font-medium',
+          // Images
+          'prose-img:rounded-xl prose-img:shadow-md prose-img:border prose-img:border-border',
+          // Horizontal rule
+          'prose-hr:border-primary/15 prose-hr:my-8',
+          // Strong/emphasis
+          'prose-strong:text-foreground prose-strong:font-semibold',
+          // Lists
+          'prose-ol:pl-5 prose-ul:pl-5',
+          className
+        )}
+        dangerouslySetInnerHTML={{ __html: html }}
+      />
+    </div>
   )
 }

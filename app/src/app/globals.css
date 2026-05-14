@@ -153,6 +153,72 @@
   --ring: oklch(0.55 0.05 50);
 }
 
+/* Material Dark - Slate (deep blue-grey) */
+.dark-slate {
+  --background: oklch(0.16 0.015 250);
+  --foreground: oklch(0.92 0.01 250);
+  --card: oklch(0.20 0.02 250);
+  --card-foreground: oklch(0.92 0.01 250);
+  --popover: oklch(0.20 0.02 250);
+  --popover-foreground: oklch(0.92 0.01 250);
+  --primary: oklch(0.72 0.14 220);
+  --primary-foreground: oklch(0.16 0.015 250);
+  --secondary: oklch(0.25 0.02 250);
+  --secondary-foreground: oklch(0.92 0.01 250);
+  --muted: oklch(0.25 0.015 250);
+  --muted-foreground: oklch(0.62 0.02 250);
+  --accent: oklch(0.25 0.02 250);
+  --accent-foreground: oklch(0.92 0.01 250);
+  --destructive: oklch(0.65 0.20 25);
+  --border: oklch(0.30 0.02 250);
+  --input: oklch(0.26 0.02 250);
+  --ring: oklch(0.72 0.14 220);
+}
+
+/* Material Dark - Forest (deep green) */
+.dark-forest {
+  --background: oklch(0.15 0.02 155);
+  --foreground: oklch(0.92 0.01 155);
+  --card: oklch(0.19 0.025 155);
+  --card-foreground: oklch(0.92 0.01 155);
+  --popover: oklch(0.19 0.025 155);
+  --popover-foreground: oklch(0.92 0.01 155);
+  --primary: oklch(0.72 0.14 155);
+  --primary-foreground: oklch(0.15 0.02 155);
+  --secondary: oklch(0.24 0.02 155);
+  --secondary-foreground: oklch(0.92 0.01 155);
+  --muted: oklch(0.24 0.015 155);
+  --muted-foreground: oklch(0.62 0.02 155);
+  --accent: oklch(0.24 0.02 155);
+  --accent-foreground: oklch(0.92 0.01 155);
+  --destructive: oklch(0.65 0.20 25);
+  --border: oklch(0.30 0.025 155);
+  --input: oklch(0.26 0.02 155);
+  --ring: oklch(0.72 0.14 155);
+}
+
+/* Material Dark - Rose (warm dark) */
+.dark-rose {
+  --background: oklch(0.15 0.015 350);
+  --foreground: oklch(0.92 0.01 350);
+  --card: oklch(0.19 0.02 350);
+  --card-foreground: oklch(0.92 0.01 350);
+  --popover: oklch(0.19 0.02 350);
+  --popover-foreground: oklch(0.92 0.01 350);
+  --primary: oklch(0.72 0.14 350);
+  --primary-foreground: oklch(0.15 0.015 350);
+  --secondary: oklch(0.24 0.02 350);
+  --secondary-foreground: oklch(0.92 0.01 350);
+  --muted: oklch(0.24 0.015 350);
+  --muted-foreground: oklch(0.62 0.02 350);
+  --accent: oklch(0.24 0.02 350);
+  --accent-foreground: oklch(0.92 0.01 350);
+  --destructive: oklch(0.65 0.20 25);
+  --border: oklch(0.30 0.02 350);
+  --input: oklch(0.26 0.02 350);
+  --ring: oklch(0.72 0.14 350);
+}
+
 /* Font size utility classes */
 .font-size-small {
   font-size: 14px;

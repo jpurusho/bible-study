@@ -66,7 +66,7 @@ const themes = [
     icon: Sun,
     previewBg: 'bg-white',
     previewText: 'text-gray-900',
-    previewAccent: 'bg-gray-100',
+    previewAccent: 'bg-indigo-50',
   },
   {
     value: 'dark',
@@ -74,7 +74,7 @@ const themes = [
     icon: Moon,
     previewBg: 'bg-gray-900',
     previewText: 'text-gray-100',
-    previewAccent: 'bg-gray-800',
+    previewAccent: 'bg-indigo-900',
   },
   {
     value: 'sepia',
@@ -83,6 +83,30 @@ const themes = [
     previewBg: 'bg-amber-50',
     previewText: 'text-amber-950',
     previewAccent: 'bg-amber-100',
+  },
+  {
+    value: 'dark-slate',
+    label: 'Slate',
+    icon: Moon,
+    previewBg: 'bg-slate-900',
+    previewText: 'text-sky-100',
+    previewAccent: 'bg-sky-900',
+  },
+  {
+    value: 'dark-forest',
+    label: 'Forest',
+    icon: Moon,
+    previewBg: 'bg-emerald-950',
+    previewText: 'text-emerald-100',
+    previewAccent: 'bg-emerald-900',
+  },
+  {
+    value: 'dark-rose',
+    label: 'Rose',
+    icon: Moon,
+    previewBg: 'bg-rose-950',
+    previewText: 'text-rose-100',
+    previewAccent: 'bg-rose-900',
   },
 ] as const
 
@@ -127,7 +151,7 @@ export function ThemeSettings() {
             <Sun className="size-4" />
             Theme
           </h3>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
             {themes.map((t) => {
               const Icon = t.icon
               const isActive = theme === t.value
