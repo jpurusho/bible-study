@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { ChevronRight } from 'lucide-react'
 import { Breadcrumbs } from '@/components/breadcrumbs'
+import { NewBadge } from '@/components/new-badge'
 
 export default async function BookPage({
   params,
@@ -29,6 +30,23 @@ export default async function BookPage({
     .eq('is_published', true)
     .order('display_order', { ascending: true })
 
+  // Fetch sessions to determine which chapters have recently published content
+  const chapterIds = chapters?.map((c) => c.id) ?? []
+  const { data: sessions } = await supabase
+    .from('sessions')
+    .select('chapter_id, published_at')
+    .in('chapter_id', chapterIds.length > 0 ? chapterIds : [''])
+    .eq('is_published', true)
+
+  // Build a map of chapter_id -> most recent published_at
+  const chapterLatestPublished = new Map<string, string | null>()
+  for (const s of sessions ?? []) {
+    const current = chapterLatestPublished.get(s.chapter_id)
+    if (!current || (s.published_at && s.published_at > current)) {
+      chapterLatestPublished.set(s.chapter_id, s.published_at)
+    }
+  }
+
   return (
     <div className="space-y-6">
       <Breadcrumbs items={[{ label: 'Books', href: '/home' }, { label: book.title }]} />
@@ -50,7 +68,10 @@ export default async function BookPage({
                     {chapter.chapter_number}
                   </div>
                   <div className="flex-1">
-                    <CardTitle className="text-base">{chapter.title}</CardTitle>
+                    <CardTitle className="text-base flex items-center gap-2">
+                      {chapter.title}
+                      <NewBadge publishedAt={chapterLatestPublished.get(chapter.id) ?? null} />
+                    </CardTitle>
                     {chapter.description && (
                       <CardDescription className="line-clamp-1">
                         {chapter.description}

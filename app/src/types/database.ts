@@ -532,6 +532,42 @@ export interface Database {
         }
         Relationships: []
       }
+      reading_progress: {
+        Row: {
+          id: string
+          user_id: string
+          session_id: string
+          last_read_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          session_id: string
+          last_read_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          session_id?: string
+          last_read_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reading_progress_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reading_progress_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "sessions"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
     }
     Views: {
       [_ in never]: never

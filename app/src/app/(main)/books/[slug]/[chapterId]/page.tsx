@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { ChevronRight } from 'lucide-react'
 import { Breadcrumbs } from '@/components/breadcrumbs'
+import { NewBadge } from '@/components/new-badge'
 
 export default async function ChapterPage({
   params,
@@ -65,7 +66,10 @@ export default async function ChapterPage({
                     {session.session_number}
                   </div>
                   <div className="flex-1">
-                    <CardTitle className="text-base">{session.title}</CardTitle>
+                    <CardTitle className="text-base flex items-center gap-2">
+                      {session.title}
+                      <NewBadge publishedAt={session.published_at} />
+                    </CardTitle>
                     {session.scripture_reference && (
                       <CardDescription>{session.scripture_reference}</CardDescription>
                     )}

@@ -9,6 +9,7 @@ import { UserNotes } from '@/components/user-notes'
 import { BookmarkButton } from '@/components/bookmark-button'
 import { DiscussionThread } from '@/components/discussion-thread'
 import { HighlightToolbar } from '@/components/highlight-toolbar'
+import { ReadingTracker } from '@/components/reading-tracker'
 
 export default async function SessionPage({
   params,
@@ -121,6 +122,7 @@ export default async function SessionPage({
         )}
       </div>
 
+      {user && <ReadingTracker sessionId={sessionId} userId={user.id} />}
       {user && <HighlightToolbar sessionId={sessionId} userId={user.id} />}
       {user && <UserNotes sessionId={sessionId} userId={user.id} />}
 
