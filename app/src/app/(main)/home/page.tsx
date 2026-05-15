@@ -68,7 +68,7 @@ export default async function HomePage() {
       {recentProgress && (
         <section className="max-w-2xl mx-auto">
           <Link
-            href={`/books/${recentProgress.sessions.chapters.books.slug}/chapters/${recentProgress.sessions.chapters.id}/sessions/${recentProgress.sessions.id}`}
+            href={`/books/${recentProgress.sessions.chapters.books.slug}/${recentProgress.sessions.chapters.id}/${recentProgress.sessions.id}`}
             className="block"
           >
             <Card className="border-primary/30 bg-gradient-to-r from-primary/5 to-transparent hover:shadow-lg hover:border-primary/50 transition-all duration-200 cursor-pointer">
