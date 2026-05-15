@@ -9,6 +9,7 @@ import { UserNotes } from '@/components/user-notes'
 import { BookmarkButton } from '@/components/bookmark-button'
 import { DiscussionThread } from '@/components/discussion-thread'
 import { HighlightToolbar } from '@/components/highlight-toolbar'
+import { ScriptureExpander } from '@/components/scripture-expander'
 import { ReadingTracker } from '@/components/reading-tracker'
 
 export default async function SessionPage({
@@ -92,7 +93,9 @@ export default async function SessionPage({
           {user && <BookmarkButton sessionId={sessionId} userId={user.id} />}
         </div>
         {session.scripture_reference && (
-          <p className="text-lg text-primary/80 font-medium">{session.scripture_reference}</p>
+          <div className="space-y-1">
+            <ScriptureExpander reference={session.scripture_reference} />
+          </div>
         )}
       </header>
 
