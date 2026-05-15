@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Users, BookOpen, FileText, ClipboardList, MessageSquare } from 'lucide-react'
+import { Users, BookOpen, FileText, ClipboardList, MessageSquare, Bell, MailCheck, ChevronRight } from 'lucide-react'
+import Link from 'next/link'
 
 export default async function AdminPage() {
   const supabase = await createClient()
@@ -53,8 +54,16 @@ export default async function AdminPage() {
     },
   ]
 
+  const adminLinks = [
+    { href: '/admin/users', label: 'Manage Users', description: 'Approve, revoke, promote users', icon: Users },
+    { href: '/admin/preapproved', label: 'Pre-Approve Emails', description: 'Auto-approve users by email', icon: MailCheck },
+    { href: '/admin/content', label: 'Manage Content', description: 'Books, chapters, sessions', icon: BookOpen },
+    { href: '/admin/quizzes', label: 'Manage Quizzes', description: 'Create and edit quizzes', icon: ClipboardList },
+    { href: '/admin/announcements', label: 'Announcements', description: 'Create notifications for users', icon: Bell },
+  ]
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <h1 className="text-2xl font-bold">Admin Dashboard</h1>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -71,6 +80,24 @@ export default async function AdminPage() {
               )}
             </CardContent>
           </Card>
+        ))}
+      </div>
+
+      <div className="space-y-3">
+        <h2 className="text-lg font-semibold">Quick Actions</h2>
+        {adminLinks.map((link) => (
+          <Link key={link.href} href={link.href}>
+            <div className="flex items-center gap-3 p-4 border border-border rounded-lg bg-card hover:bg-muted/50 transition-colors cursor-pointer mb-2">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                <link.icon className="h-5 w-5 text-primary" />
+              </div>
+              <div className="flex-1">
+                <p className="font-medium text-sm">{link.label}</p>
+                <p className="text-xs text-muted-foreground">{link.description}</p>
+              </div>
+              <ChevronRight className="h-4 w-4 text-muted-foreground" />
+            </div>
+          </Link>
         ))}
       </div>
     </div>
