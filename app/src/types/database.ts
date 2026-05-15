@@ -568,6 +568,27 @@ export interface Database {
           }
         ]
       }
+      preapproved_emails: {
+        Row: {
+          id: string
+          email: string
+          added_by: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          email: string
+          added_by?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          email?: string
+          added_by?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
