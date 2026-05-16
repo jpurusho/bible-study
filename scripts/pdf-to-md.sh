@@ -1,13 +1,14 @@
 #!/bin/bash
-# Convert PDF to Markdown
+# Convert PDF to Markdown (text extraction + cleanup)
 # Usage: ./scripts/pdf-to-md.sh input.pdf [output.md]
 #
 # For best results with slide-heavy PDFs:
 #   1. Export Keynote → PDF first
 #   2. Run this script
 #   3. Review and clean up the output
+#   4. Paste into admin editor via "Import Markdown" button
 #
-# Dependencies: pandoc (brew install pandoc)
+# Dependencies: pdftotext (brew install poppler)
 
 set -e
 
