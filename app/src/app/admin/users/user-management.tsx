@@ -85,7 +85,7 @@ export function UserManagement({ initialUsers }: { initialUsers: Profile[] }) {
                   size="sm"
                   variant="ghost"
                   onClick={() => updateUser(user.id, { role: 'admin' })}
-                  title="Promote to admin"
+                  title="Make Admin: gives full access to manage content, users, and announcements"
                 >
                   <Shield className="h-4 w-4" />
                 </Button>
@@ -94,9 +94,9 @@ export function UserManagement({ initialUsers }: { initialUsers: Profile[] }) {
                   size="sm"
                   variant="ghost"
                   onClick={() => updateUser(user.id, { role: 'user' })}
-                  title="Demote to user"
+                  title="Remove Admin: user can only read content, take notes, and participate in discussions"
                 >
-                  <ShieldOff className="h-4 w-4" />
+                  <ShieldOff className="h-4 w-4 text-primary" />
                 </Button>
               )}
             </div>

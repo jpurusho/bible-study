@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { AppHeader } from '@/components/app-header'
 import Link from 'next/link'
-import { Users, BookOpen, Settings, Bell, ClipboardList, MailCheck } from 'lucide-react'
+import { Users, BookOpen, Settings, Bell, ClipboardList, MailCheck, ArrowLeft } from 'lucide-react'
 
 export default async function AdminLayout({
   children,
@@ -55,6 +55,12 @@ export default async function AdminLayout({
             </nav>
           </aside>
           <main className="flex-1 min-w-0">
+            <div className="mb-4 md:hidden">
+              <Link href="/admin" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors">
+                <ArrowLeft className="size-4" />
+                Back to Admin
+              </Link>
+            </div>
             {children}
           </main>
         </div>
