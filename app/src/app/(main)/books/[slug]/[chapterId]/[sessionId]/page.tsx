@@ -10,6 +10,7 @@ import { BookmarkButton } from '@/components/bookmark-button'
 import { DiscussionThread } from '@/components/discussion-thread'
 import { HighlightToolbar } from '@/components/highlight-toolbar'
 import { ScriptureExpander } from '@/components/scripture-expander'
+import { ScriptureLinker } from '@/components/scripture-linker'
 import { ReadingTracker } from '@/components/reading-tracker'
 
 export default async function SessionPage({
@@ -125,6 +126,7 @@ export default async function SessionPage({
         )}
       </div>
 
+      <ScriptureLinker />
       {user && <ReadingTracker sessionId={sessionId} userId={user.id} />}
       {user && <HighlightToolbar sessionId={sessionId} userId={user.id} />}
       {user && <UserNotes sessionId={sessionId} userId={user.id} />}
