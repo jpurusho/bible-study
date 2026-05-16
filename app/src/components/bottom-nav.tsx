@@ -17,7 +17,7 @@ export function BottomNav() {
   const pathname = usePathname()
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 sm:hidden bg-background/80 backdrop-blur-lg border-t">
+    <nav data-slot="bottom-nav" className="fixed bottom-0 left-0 right-0 z-50 sm:hidden bg-background/80 backdrop-blur-lg border-t">
       <div className="flex items-center justify-around h-16">
         {tabs.map(({ href, label, icon: Icon }) => {
           const isActive = pathname === href || pathname.startsWith(href + '/')

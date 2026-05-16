@@ -12,6 +12,8 @@ import { HighlightToolbar } from '@/components/highlight-toolbar'
 import { ScriptureExpander } from '@/components/scripture-expander'
 import { ScriptureLinker } from '@/components/scripture-linker'
 import { ReadingTracker } from '@/components/reading-tracker'
+import { PrintButton } from '@/components/print-button'
+import Link from 'next/link'
 
 export default async function SessionPage({
   params,
@@ -73,6 +75,13 @@ export default async function SessionPage({
     .eq('is_published', true)
     .order('display_order', { ascending: true })
 
+  const { data: quiz } = await supabase
+    .from('quizzes')
+    .select('id, title')
+    .eq('session_id', sessionId)
+    .eq('is_published', true)
+    .maybeSingle()
+
   const currentIndex = allSessions?.findIndex((s) => s.id === sessionId) ?? -1
   const prevSession = currentIndex > 0 ? allSessions![currentIndex - 1] : null
   const nextSession = currentIndex < (allSessions?.length ?? 0) - 1 ? allSessions![currentIndex + 1] : null
@@ -91,7 +100,10 @@ export default async function SessionPage({
       <header className="space-y-2">
         <div className="flex items-start justify-between gap-4">
           <h1 className="text-3xl font-bold tracking-tight">{session.title}</h1>
-          {user && <BookmarkButton sessionId={sessionId} userId={user.id} />}
+          <div className="flex items-center gap-3" data-slot="no-print">
+            <PrintButton />
+            {user && <BookmarkButton sessionId={sessionId} userId={user.id} />}
+          </div>
         </div>
         {session.scripture_reference && (
           <div className="space-y-1">
@@ -130,6 +142,23 @@ export default async function SessionPage({
       {user && <ReadingTracker sessionId={sessionId} userId={user.id} />}
       {user && <HighlightToolbar sessionId={sessionId} userId={user.id} />}
       {user && <UserNotes sessionId={sessionId} userId={user.id} />}
+
+      {quiz && (
+        <div className="rounded-xl border border-primary/20 bg-primary/5 p-5" data-slot="no-print">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-primary">Quiz Available</p>
+              <p className="text-xs text-muted-foreground mt-0.5">{quiz.title}</p>
+            </div>
+            <Link
+              href={`/quiz/${quiz.id}`}
+              className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
+            >
+              Take Quiz
+            </Link>
+          </div>
+        </div>
+      )}
 
       {user && (
         <DiscussionThread sessionId={sessionId} userId={user.id} userRole={userRole} />

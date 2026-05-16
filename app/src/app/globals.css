@@ -245,3 +245,56 @@
 .tiptap:focus {
   outline: none;
 }
+
+/* Print styles for PDF export */
+@media print {
+  header, footer, nav,
+  [data-slot="bottom-nav"],
+  [data-slot="back-to-top"],
+  [data-slot="no-print"] {
+    display: none !important;
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 12pt;
+  }
+
+  main {
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+
+  .prose {
+    max-width: 100% !important;
+    color: black !important;
+  }
+
+  .prose h1, .prose h2, .prose h3, .prose h4 {
+    color: #1a1a2e !important;
+    page-break-after: avoid;
+  }
+
+  .prose blockquote {
+    border-left: 3px solid #4338ca !important;
+    background: #f5f3ff !important;
+    padding: 8px 16px !important;
+    page-break-inside: avoid;
+  }
+
+  .prose ul, .prose ol {
+    page-break-inside: avoid;
+  }
+
+  a {
+    color: inherit !important;
+    text-decoration: none !important;
+  }
+
+  .rounded-2xl {
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+}
