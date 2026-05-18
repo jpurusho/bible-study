@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { TiptapEditor } from '@/components/editor/tiptap-editor'
+import { ImageToContent } from '@/components/editor/image-to-content'
 import { Save, Plus, Trash2, Video, Music, Image as ImageIcon, FileText, Code, Eye, EyeOff, Megaphone, Upload } from 'lucide-react'
 import { toast } from 'sonner'
 import { markdownToHtml } from '@/lib/markdown-to-html'
@@ -177,7 +178,16 @@ export function SessionEditor({ session, initialMedia }: SessionEditorProps) {
       <section className="space-y-3">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold">Study Notes</h2>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <ImageToContent
+              sessionTitle={session.title}
+              bookContext="Acts of the Apostles Bible study"
+              onGenerated={(html) => {
+                if (content && !confirm('Replace current content with AI-generated notes?')) return
+                setContent(html)
+                toast.success('Content generated and loaded into editor')
+              }}
+            />
             <Button variant="outline" size="sm" onClick={() => setMarkdownDialogOpen(true)}>
               <Upload className="size-4" />
               Import Markdown

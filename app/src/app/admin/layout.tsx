@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { AppHeader } from '@/components/app-header'
 import Link from 'next/link'
-import { Users, BookOpen, Settings, Bell, ClipboardList, MailCheck, ArrowLeft } from 'lucide-react'
+import { Users, BookOpen, Settings, Bell, ClipboardList, MailCheck, ArrowLeft, Wrench } from 'lucide-react'
 
 export default async function AdminLayout({
   children,
@@ -33,6 +33,7 @@ export default async function AdminLayout({
     { href: '/admin/content', label: 'Content', icon: BookOpen },
     { href: '/admin/quizzes', label: 'Quizzes', icon: ClipboardList },
     { href: '/admin/announcements', label: 'Announcements', icon: Bell },
+    { href: '/admin/settings', label: 'Settings', icon: Wrench },
   ]
 
   return (

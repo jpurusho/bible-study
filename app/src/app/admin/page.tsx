@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Users, BookOpen, FileText, ClipboardList, MessageSquare, Bell, MailCheck, ChevronRight } from 'lucide-react'
+import { Users, BookOpen, FileText, ClipboardList, MessageSquare, Bell, MailCheck, ChevronRight, Wrench } from 'lucide-react'
 import Link from 'next/link'
 
 export default async function AdminPage() {
@@ -60,6 +60,7 @@ export default async function AdminPage() {
     { href: '/admin/content', label: 'Manage Content', description: 'Books, chapters, sessions', icon: BookOpen },
     { href: '/admin/quizzes', label: 'Manage Quizzes', description: 'Create and edit quizzes', icon: ClipboardList },
     { href: '/admin/announcements', label: 'Announcements', description: 'Create notifications for users', icon: Bell },
+    { href: '/admin/settings', label: 'Settings', description: 'API keys, AI configuration', icon: Wrench },
   ]
 
   return (
