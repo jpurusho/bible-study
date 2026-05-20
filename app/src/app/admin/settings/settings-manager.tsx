@@ -80,7 +80,7 @@ export function SettingsManager({ initialSettings }: Props) {
               </Button>
             </div>
             <p className="text-xs text-muted-foreground">
-              Used for "Generate from Images" feature in the session editor. Get a key from console.anthropic.com.
+              Used for &ldquo;Generate from Images&rdquo; feature in the session editor. Get a key from console.anthropic.com.
             </p>
           </div>
 

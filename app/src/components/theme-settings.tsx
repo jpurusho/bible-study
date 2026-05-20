@@ -13,7 +13,6 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
-import { toast } from 'sonner'
 
 const FONT_SIZE_KEY = 'bible-study-font-size'
 
