@@ -42,7 +42,7 @@ export default function RootLayout({
           attribute="class"
           defaultTheme="system"
           enableSystem
-          themes={['light', 'dark', 'sepia', 'dark-slate', 'dark-forest', 'dark-rose']}
+          themes={['light', 'dark', 'sepia', 'dark-slate', 'dark-forest', 'dark-rose', 'gradient-sunset', 'gradient-ocean', 'gradient-aurora']}
           disableTransitionOnChange
         >
           {children}

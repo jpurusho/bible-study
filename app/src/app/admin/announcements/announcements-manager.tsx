@@ -116,7 +116,7 @@ export function AnnouncementsManager({ initialAnnouncements }: Props) {
           <Plus className="size-4" />
           New Announcement
         </Button>
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <Dialog open={dialogOpen}>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Create Announcement</DialogTitle>

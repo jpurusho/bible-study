@@ -81,6 +81,30 @@ const themes = [
     previewText: 'text-rose-100',
     previewAccent: 'bg-rose-900',
   },
+  {
+    value: 'gradient-sunset',
+    label: 'Sunset',
+    icon: Palette,
+    previewBg: 'bg-gradient-to-br from-orange-950 to-purple-950',
+    previewText: 'text-orange-100',
+    previewAccent: 'bg-orange-900/50',
+  },
+  {
+    value: 'gradient-ocean',
+    label: 'Ocean',
+    icon: Palette,
+    previewBg: 'bg-gradient-to-br from-blue-950 to-teal-950',
+    previewText: 'text-cyan-100',
+    previewAccent: 'bg-cyan-900/50',
+  },
+  {
+    value: 'gradient-aurora',
+    label: 'Aurora',
+    icon: Palette,
+    previewBg: 'bg-gradient-to-br from-purple-950 to-green-950',
+    previewText: 'text-green-100',
+    previewAccent: 'bg-green-900/50',
+  },
 ] as const
 
 export function ThemeSettings() {
