@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { BookOpen, ChevronRight, Sparkles } from 'lucide-react'
+import { VerseOfTheDay } from '@/components/verse-of-the-day'
 
 interface ReadingProgressRow {
   session_id: string
@@ -62,6 +63,11 @@ export default async function HomePage() {
         <p className="text-lg text-muted-foreground max-w-xl mx-auto">
           Access your weekly study materials, take personal notes, participate in discussions, and grow together.
         </p>
+      </section>
+
+      {/* Verse of the Day */}
+      <section className="max-w-2xl mx-auto">
+        <VerseOfTheDay />
       </section>
 
       {/* Continue Reading section */}
