@@ -7,13 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
-import { Plus, Trash2, Eye, EyeOff, Info, AlertTriangle, AlertCircle } from 'lucide-react'
+import { Plus, Trash2, Eye, EyeOff, Info, AlertTriangle, AlertCircle, X } from 'lucide-react'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import type { Database } from '@/types/database'
@@ -26,7 +20,7 @@ interface Props {
 
 export function AnnouncementsManager({ initialAnnouncements }: Props) {
   const [announcements, setAnnouncements] = useState(initialAnnouncements)
-  const [dialogOpen, setDialogOpen] = useState(false)
+  const [showForm, setShowForm] = useState(false)
   const router = useRouter()
   const supabase = createClient()
 
@@ -61,7 +55,7 @@ export function AnnouncementsManager({ initialAnnouncements }: Props) {
     }
     if (data) setAnnouncements([data, ...announcements])
     toast.success('Announcement created')
-    setDialogOpen(false)
+    setShowForm(false)
     router.refresh()
   }
 
@@ -110,58 +104,62 @@ export function AnnouncementsManager({ initialAnnouncements }: Props) {
   }
 
   return (
-    <>
-      <div className="flex justify-end">
-        <Button onClick={() => setDialogOpen(true)}>
-          <Plus className="size-4" />
-          New Announcement
-        </Button>
-        <Dialog open={dialogOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Create Announcement</DialogTitle>
-            </DialogHeader>
-            <form action={handleCreate} className="space-y-4">
+    <div className="space-y-4">
+      {!showForm ? (
+        <div className="flex justify-end">
+          <Button onClick={() => setShowForm(true)}>
+            <Plus className="size-4" />
+            New Announcement
+          </Button>
+        </div>
+      ) : (
+        <div className="border border-border rounded-xl p-5 bg-card space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="font-semibold">Create Announcement</h3>
+            <button onClick={() => setShowForm(false)} className="text-muted-foreground hover:text-foreground">
+              <X className="size-4" />
+            </button>
+          </div>
+          <form action={handleCreate} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="title">Title</Label>
+              <Input id="title" name="title" required />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="content">Content (use Shift+Enter for new lines)</Label>
+              <Textarea id="content" name="content" required className="min-h-24" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="priority">Priority</Label>
+              <select
+                id="priority"
+                name="priority"
+                className="w-full h-8 rounded-lg border border-border bg-background px-2 text-sm"
+              >
+                <option value="info">Info</option>
+                <option value="important">Important</option>
+                <option value="urgent">Urgent</option>
+              </select>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
-                <Label htmlFor="title">Title</Label>
-                <Input id="title" name="title" required />
+                <Label htmlFor="starts_at">Starts</Label>
+                <Input id="starts_at" name="starts_at" type="datetime-local" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="content">Content</Label>
-                <Textarea id="content" name="content" required className="min-h-24" />
+                <Label htmlFor="ends_at">Ends (optional)</Label>
+                <Input id="ends_at" name="ends_at" type="datetime-local" />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="priority">Priority</Label>
-                <select
-                  id="priority"
-                  name="priority"
-                  className="w-full h-8 rounded-lg border border-border bg-background px-2 text-sm"
-                >
-                  <option value="info">Info</option>
-                  <option value="important">Important</option>
-                  <option value="urgent">Urgent</option>
-                </select>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-2">
-                  <Label htmlFor="starts_at">Starts</Label>
-                  <Input id="starts_at" name="starts_at" type="datetime-local" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="ends_at">Ends (optional)</Label>
-                  <Input id="ends_at" name="ends_at" type="datetime-local" />
-                </div>
-              </div>
-              <div className="flex justify-end gap-2">
-                <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
-                  Cancel
-                </Button>
-                <Button type="submit">Create</Button>
-              </div>
-            </form>
-          </DialogContent>
-        </Dialog>
-      </div>
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button type="button" variant="outline" onClick={() => setShowForm(false)}>
+                Cancel
+              </Button>
+              <Button type="submit">Create</Button>
+            </div>
+          </form>
+        </div>
+      )}
 
       {announcements.length === 0 ? (
         <div className="text-center py-12 text-muted-foreground">
@@ -186,10 +184,10 @@ export function AnnouncementsManager({ initialAnnouncements }: Props) {
                     <span className="text-xs bg-muted px-1.5 py-0.5 rounded">Inactive</span>
                   )}
                 </div>
-                <p className="text-sm text-muted-foreground line-clamp-2 mt-0.5">{ann.content}</p>
+                <p className="text-sm text-muted-foreground whitespace-pre-line mt-0.5">{ann.content}</p>
                 <p className="text-xs text-muted-foreground mt-1">
                   {new Date(ann.starts_at).toLocaleDateString()}
-                  {ann.ends_at && ` — ${new Date(ann.ends_at).toLocaleDateString()}`}
+                  {ann.ends_at && ` to ${new Date(ann.ends_at).toLocaleDateString()}`}
                 </p>
               </div>
               <div className="flex items-center gap-1">
@@ -215,6 +213,6 @@ export function AnnouncementsManager({ initialAnnouncements }: Props) {
           ))}
         </div>
       )}
-    </>
+    </div>
   )
 }

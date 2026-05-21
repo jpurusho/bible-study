@@ -25,19 +25,19 @@ interface AnnouncementsBannerProps {
 
 const priorityStyles: Record<Priority, { border: string; bg: string; icon: string }> = {
   info: {
-    border: 'border-l-blue-500',
-    bg: 'bg-blue-50 dark:bg-blue-950/30',
-    icon: 'text-blue-500',
+    border: 'border-l-4 border-l-primary',
+    bg: 'bg-primary/5',
+    icon: 'text-primary',
   },
   important: {
-    border: 'border-l-amber-500',
-    bg: 'bg-amber-50 dark:bg-amber-950/30',
-    icon: 'text-amber-500',
+    border: 'border-l-4 border-l-amber-400',
+    bg: 'bg-amber-400/10',
+    icon: 'text-amber-400',
   },
   urgent: {
-    border: 'border-l-red-500',
-    bg: 'bg-red-50 dark:bg-red-950/30',
-    icon: 'text-red-500',
+    border: 'border-l-4 border-l-red-400',
+    bg: 'bg-red-400/10',
+    icon: 'text-red-400',
   },
 }
 
@@ -119,7 +119,7 @@ export function AnnouncementsBanner({ userId }: AnnouncementsBannerProps) {
   return (
     <div
       className={cn(
-        'relative rounded-lg border-l-4 p-4 pr-12 shadow-sm transition-all duration-300',
+        'relative rounded-lg p-4 pr-12 shadow-sm transition-all duration-300 mb-4',
         styles.border,
         styles.bg,
         visible ? 'translate-y-0 opacity-100' : '-translate-y-2 opacity-0'
@@ -129,7 +129,7 @@ export function AnnouncementsBanner({ userId }: AnnouncementsBannerProps) {
         <Icon className={cn('mt-0.5 h-5 w-5 shrink-0', styles.icon)} />
         <div className="min-w-0 flex-1">
           <p className="font-bold text-foreground">{announcement.title}</p>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="mt-1 text-sm text-muted-foreground whitespace-pre-line">
             {announcement.content}
           </p>
         </div>
