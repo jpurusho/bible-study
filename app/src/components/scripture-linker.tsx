@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { BookOpen, Loader2, X } from 'lucide-react'
-import { findScriptureRefs } from '@/lib/scripture-refs'
+import { findScriptureRefs, chapterFromText, type ScriptureContext } from '@/lib/scripture-refs'
 
 interface ExpandedVerse {
   /** As written in the content — what the popup header shows. */
@@ -18,14 +18,14 @@ interface ExpandedVerse {
 
 interface ScriptureLinkerProps {
   /**
-   * Canonical book name for the session being read. Lets references written
-   * without a book ("cf. 22:2; 26:14") resolve against it, which is how the
-   * study notes cite the book they are expounding.
+   * The book and chapter the session expounds. Lets references that omit them
+   * ("cf. 22:2; 26:14", "vv. 17-20") resolve, which is how the study notes cite
+   * the passage under discussion.
    */
-  defaultBook?: string
+  context?: ScriptureContext
 }
 
-export function ScriptureLinker({ defaultBook }: ScriptureLinkerProps = {}) {
+export function ScriptureLinker({ context = {} }: ScriptureLinkerProps = {}) {
   const [expandedVerse, setExpandedVerse] = useState<ExpandedVerse | null>(null)
   const processedRef = useRef(false)
 
@@ -67,13 +67,27 @@ export function ScriptureLinker({ defaultBook }: ScriptureLinkerProps = {}) {
       if (node.textContent) textNodes.push(node)
     }
 
+    // Verse-only citations ("vv. 17-20") mean the chapter the current section is
+    // about, so track it as we move down the page. Headings name that passage;
+    // the session's own reference covers the text before the first heading.
+    let chapter = context.chapter
+    let lastHeading: Element | null = null
+
     textNodes.forEach((textNode) => {
       const text = textNode.textContent || ''
       const parent = textNode.parentNode
       if (!parent) return
       if (parent instanceof HTMLElement && parent.closest('[data-scripture-link]')) return
 
-      const matches = findScriptureRefs(text, defaultBook)
+      if (parent instanceof HTMLElement) {
+        const heading = parent.closest('h1, h2, h3, h4, h5, h6')
+        if (heading && heading !== lastHeading) {
+          lastHeading = heading
+          chapter = chapterFromText(heading.textContent || '', context.book) ?? chapter
+        }
+      }
+
+      const matches = findScriptureRefs(text, { book: context.book, chapter })
       if (matches.length === 0) return
 
       const fragment = document.createDocumentFragment()
@@ -109,7 +123,7 @@ export function ScriptureLinker({ defaultBook }: ScriptureLinkerProps = {}) {
 
       parent.replaceChild(fragment, textNode)
     })
-  }, [defaultBook])
+  }, [context.book, context.chapter])
 
   useEffect(() => {
     function handleClick(e: Event) {

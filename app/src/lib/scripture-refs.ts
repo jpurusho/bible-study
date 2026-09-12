@@ -159,6 +159,12 @@ const ANCHORED_REF_PATTERN = `^(${BOOK_PATTERN})\\.?\\s+(${NUMBERS_PATTERN})`
 const BOOKLESS_PATTERN =
   `\\d+:${V}(?:\\s*[–-]\\s*${V}(?::${V})?)?(?:,\\s*${V}(?:\\s*[–-]\\s*${V})?)*` + FF_PATTERN
 
+// A verse-only reference: "v. 39", "vv. 17-20", "v. 20b". These carry neither
+// book nor chapter, so they need the chapter currently under discussion — see
+// `chapterFromText`.
+const VERSE_ONLY_PATTERN =
+  `\\bvv?\\.\\s*(${V}(?:\\s*[–-]\\s*${V})?(?:,\\s*${V}(?:\\s*[–-]\\s*${V})?)*)` + FF_PATTERN
+
 export interface ScriptureMatch {
   /** Exactly as it appears in the content, e.g. "1 Cor 9:22-23". */
   display: string
@@ -196,26 +202,63 @@ export function toCanonicalReference(book: string, numbers: string): string {
   return `${canonical} ${forLookup(numbers)}`
 }
 
-/** Canonical book name for a session's scripture_reference, e.g. "Acts 22" -> "Acts". */
-export function bookFromReference(reference: string | null | undefined): string | undefined {
-  if (!reference) return undefined
-  const m = reference.match(new RegExp(`^\\s*(${BOOK_PATTERN})\\b`, 'i'))
-  if (!m) return undefined
+/** What the surrounding page is about, for references that omit part of themselves. */
+export interface ScriptureContext {
+  /** Canonical book name. */
+  book?: string
+  /** Chapter under discussion, for verse-only references like "vv. 17-20". */
+  chapter?: number
+}
+
+/**
+ * The book and chapter a session's scripture_reference pins down:
+ *   "Acts 22"       -> { book: 'Acts', chapter: 22 }
+ *   "Acts 21:17-40" -> { book: 'Acts', chapter: 21 }
+ *   "Acts 21-26"    -> { book: 'Acts' }   — spans chapters, so none is implied
+ */
+export function contextFromReference(reference: string | null | undefined): ScriptureContext {
+  if (!reference) return {}
+  const m = reference.match(new RegExp(`^\\s*(${BOOK_PATTERN})\\.?\\s*(\\d+)?`, 'i'))
+  if (!m) return {}
   const key = m[1].toLowerCase().replace(/\s+/g, ' ').trim()
-  return (
+  const book =
     ALIAS_TO_CANONICAL.get(key) ??
     ALIAS_TO_CANONICAL.get(key.replace(/^([1-3])\s*/, '$1 '))
-  )
+  if (!book || !m[2]) return { book }
+
+  // A chapter range ("Acts 21-26") implies no single chapter.
+  const spansChapters = new RegExp(`^\\s*${m[2]}\\s*[–-]\\s*\\d`).test(reference.slice(m[0].length - m[2].length))
+  return spansChapters ? { book } : { book, chapter: Number(m[2]) }
+}
+
+/**
+ * The chapter a heading is about, from a book-less reference in it:
+ * "Point 4: Vision in the Temple (22:17-21)" -> 22.
+ *
+ * Study notes name the passage in the heading and then cite bare verses under
+ * it, so headings are the reliable source for the chapter in force. Tracking
+ * the most recent reference of any kind is not: in these notes "v. 20" follows
+ * "Ps 103:2" and "v. 26" follows "Num 6:1-21".
+ */
+export function chapterFromText(text: string, book?: string): number | undefined {
+  if (!book) return undefined
+  const matches = findScriptureRefs(text, { book })
+  for (let i = matches.length - 1; i >= 0; i--) {
+    // Written without a book, i.e. about the book this session expounds.
+    if (/^\d/.test(matches[i].display)) return Number(matches[i].display.split(':')[0])
+  }
+  return undefined
 }
 
 /**
  * Find every scripture reference in a plain-text string.
  *
- * `defaultBook` must be a canonical book name (see `bookFromReference`). When
- * given, book-less references such as "22:2" resolve against it, but only if
- * that chapter actually exists in that book.
+ * With `context.book`, book-less references such as "22:2" resolve against it,
+ * but only if that chapter exists in that book. With `context.chapter` as well,
+ * verse-only references such as "vv. 17-20" resolve too.
  */
-export function findScriptureRefs(text: string, defaultBook?: string): ScriptureMatch[] {
+export function findScriptureRefs(text: string, context: ScriptureContext = {}): ScriptureMatch[] {
+  const { book: defaultBook, chapter: defaultChapter } = context
   const regex = scriptureRegex()
   const out: ScriptureMatch[] = []
   let match: RegExpExecArray | null
@@ -282,6 +325,23 @@ export function findScriptureRefs(text: string, defaultBook?: string): Scripture
       start,
       end,
     })
+  }
+
+  if (defaultChapter && defaultChapter <= maxChapter) {
+    const verseOnly = new RegExp(VERSE_ONLY_PATTERN, 'gi')
+    while ((match = verseOnly.exec(text)) !== null) {
+      const start = match.index
+      const end = start + match[0].length
+      if (out.some((r) => start < r.end && end > r.start)) continue
+
+      out.push({
+        // "vv. 17-20" is kept whole, so the reader sees the citation as written.
+        display: match[0],
+        canonical: `${defaultBook} ${defaultChapter}:${forLookup(match[1])}`,
+        start,
+        end,
+      })
+    }
   }
 
   return out.sort((a, b) => a.start - b.start)
