@@ -11,6 +11,7 @@ import { DiscussionThread } from '@/components/discussion-thread'
 import { HighlightToolbar } from '@/components/highlight-toolbar'
 import { ScriptureExpander } from '@/components/scripture-expander'
 import { ScriptureLinker } from '@/components/scripture-linker'
+import { bookFromReference } from '@/lib/scripture-refs'
 import { ReadingTracker } from '@/components/reading-tracker'
 import { PrintButton } from '@/components/print-button'
 import Link from 'next/link'
@@ -138,7 +139,7 @@ export default async function SessionPage({
         )}
       </div>
 
-      <ScriptureLinker />
+      <ScriptureLinker defaultBook={bookFromReference(session.scripture_reference)} />
       {user && <ReadingTracker sessionId={sessionId} userId={user.id} />}
       {user && <HighlightToolbar sessionId={sessionId} userId={user.id} />}
       {user && <UserNotes sessionId={sessionId} userId={user.id} />}

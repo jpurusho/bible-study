@@ -28,6 +28,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# OCR scratch space (page photos + verbatim source transcripts)
+.ocr-work/
+
 # supabase local
 supabase/.temp/
 supabase/.branches/

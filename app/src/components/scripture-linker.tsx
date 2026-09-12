@@ -3,39 +3,50 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { BookOpen, Loader2, X } from 'lucide-react'
-
-const SCRIPTURE_REGEX = /\b(Genesis|Exodus|Leviticus|Numbers|Deuteronomy|Joshua|Judges|Ruth|1\s*Samuel|2\s*Samuel|1\s*Kings|2\s*Kings|1\s*Chronicles|2\s*Chronicles|Ezra|Nehemiah|Esther|Job|Psalms?|Proverbs?|Ecclesiastes|Song of Solomon|Isaiah|Jeremiah|Lamentations|Ezekiel|Daniel|Hosea|Joel|Amos|Obadiah|Jonah|Micah|Nahum|Habakkuk|Zephaniah|Haggai|Zechariah|Malachi|Matthew|Mark|Luke|John|Acts|Romans|1\s*Corinthians|2\s*Corinthians|Galatians|Ephesians|Philippians|Colossians|1\s*Thessalonians|2\s*Thessalonians|1\s*Timothy|2\s*Timothy|Titus|Philemon|Hebrews|James|1\s*Peter|2\s*Peter|1\s*John|2\s*John|3\s*John|Jude|Revelation)\s+(\d+[:\d\-,;\s]*\d*)/gi
+import { findScriptureRefs } from '@/lib/scripture-refs'
 
 interface ExpandedVerse {
+  /** As written in the content — what the popup header shows. */
   reference: string
+  /** Normalized book name — what /api/bible is asked for. */
+  lookup: string
   text: string | null
   loading: boolean
   error: boolean
   element: HTMLElement
 }
 
-export function ScriptureLinker() {
+interface ScriptureLinkerProps {
+  /**
+   * Canonical book name for the session being read. Lets references written
+   * without a book ("cf. 22:2; 26:14") resolve against it, which is how the
+   * study notes cite the book they are expounding.
+   */
+  defaultBook?: string
+}
+
+export function ScriptureLinker({ defaultBook }: ScriptureLinkerProps = {}) {
   const [expandedVerse, setExpandedVerse] = useState<ExpandedVerse | null>(null)
   const processedRef = useRef(false)
 
-  const fetchVerse = useCallback(async (reference: string, element: HTMLElement) => {
+  const fetchVerse = useCallback(async (reference: string, lookup: string, element: HTMLElement) => {
     if (expandedVerse?.reference === reference) {
       setExpandedVerse(null)
       return
     }
 
-    setExpandedVerse({ reference, text: null, loading: true, error: false, element })
+    setExpandedVerse({ reference, lookup, text: null, loading: true, error: false, element })
 
     try {
-      const res = await fetch(`/api/bible?ref=${encodeURIComponent(reference)}`)
+      const res = await fetch(`/api/bible?ref=${encodeURIComponent(lookup)}`)
       if (res.ok) {
         const data = await res.json()
-        setExpandedVerse({ reference, text: data.text, loading: false, error: false, element })
+        setExpandedVerse({ reference, lookup, text: data.text, loading: false, error: false, element })
       } else {
-        setExpandedVerse({ reference, text: null, loading: false, error: true, element })
+        setExpandedVerse({ reference, lookup, text: null, loading: false, error: true, element })
       }
     } catch {
-      setExpandedVerse({ reference, text: null, loading: false, error: true, element })
+      setExpandedVerse({ reference, lookup, text: null, loading: false, error: true, element })
     }
   }, [expandedVerse?.reference])
 
@@ -46,15 +57,14 @@ export function ScriptureLinker() {
     const container = document.querySelector('[data-content-container]')
     if (!container) return
 
+    // Collect first, then rewrite: replacing nodes while the walker is live
+    // would have it step into the freshly inserted text.
     const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT)
     const textNodes: Text[] = []
 
     while (walker.nextNode()) {
       const node = walker.currentNode as Text
-      if (node.textContent && SCRIPTURE_REGEX.test(node.textContent)) {
-        textNodes.push(node)
-      }
-      SCRIPTURE_REGEX.lastIndex = 0
+      if (node.textContent) textNodes.push(node)
     }
 
     textNodes.forEach((textNode) => {
@@ -63,45 +73,48 @@ export function ScriptureLinker() {
       if (!parent) return
       if (parent instanceof HTMLElement && parent.closest('[data-scripture-link]')) return
 
+      const matches = findScriptureRefs(text, defaultBook)
+      if (matches.length === 0) return
+
       const fragment = document.createDocumentFragment()
       let lastIndex = 0
-      let match
 
-      SCRIPTURE_REGEX.lastIndex = 0
-      while ((match = SCRIPTURE_REGEX.exec(text)) !== null) {
-        if (match.index > lastIndex) {
-          fragment.appendChild(document.createTextNode(text.slice(lastIndex, match.index)))
+      for (const { display, canonical, start, end } of matches) {
+        if (start > lastIndex) {
+          fragment.appendChild(document.createTextNode(text.slice(lastIndex, start)))
         }
 
-        const reference = match[0].trim()
         const link = document.createElement('button')
-        link.setAttribute('data-scripture-link', reference)
+        link.setAttribute('data-scripture-link', display)
+        link.setAttribute('data-scripture-lookup', canonical)
         link.className = 'inline-flex items-center gap-0.5 text-primary hover:text-primary/80 underline underline-offset-2 decoration-primary/30 hover:decoration-primary cursor-pointer font-medium transition-colors'
-        link.textContent = reference
+        link.textContent = display
         link.addEventListener('click', (e) => {
           e.preventDefault()
           const target = e.currentTarget as HTMLElement
-          window.dispatchEvent(new CustomEvent('scripture-click', { detail: { reference, element: target } }))
+          window.dispatchEvent(
+            new CustomEvent('scripture-click', {
+              detail: { reference: display, lookup: canonical, element: target },
+            })
+          )
         })
         fragment.appendChild(link)
 
-        lastIndex = match.index + match[0].length
+        lastIndex = end
       }
 
       if (lastIndex < text.length) {
         fragment.appendChild(document.createTextNode(text.slice(lastIndex)))
       }
 
-      if (lastIndex > 0) {
-        parent.replaceChild(fragment, textNode)
-      }
+      parent.replaceChild(fragment, textNode)
     })
-  }, [])
+  }, [defaultBook])
 
   useEffect(() => {
     function handleClick(e: Event) {
       const detail = (e as CustomEvent).detail
-      fetchVerse(detail.reference, detail.element)
+      fetchVerse(detail.reference, detail.lookup ?? detail.reference, detail.element)
     }
     window.addEventListener('scripture-click', handleClick)
     return () => window.removeEventListener('scripture-click', handleClick)

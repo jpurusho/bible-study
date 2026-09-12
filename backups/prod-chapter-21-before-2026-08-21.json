@@ -1,0 +1,17 @@
+{
+  "captured_at": "2026-08-21",
+  "project_ref": "avctqylfozfsoavkmxgt",
+  "note": "State of public.chapters row for Acts 21 immediately before supabase/prod_acts_21_23.sql was applied. Only `description` was changed by that script (title/number/order/is_published were already identical).",
+  "rows": [
+    {
+      "id": "20000000-0000-0000-0000-000000000021",
+      "book_id": "10000000-0000-0000-0000-000000000001",
+      "title": "Paul in Jerusalem",
+      "chapter_number": 21,
+      "description": "Acts 21:17-22:21 — Humility, hostility, and Paul's defense before the crowd",
+      "display_order": 21,
+      "is_published": true,
+      "created_at": "2026-05-15T23:19:56.160131+00:00"
+    }
+  ]
+}
