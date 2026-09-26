@@ -159,21 +159,29 @@ def convert(md: str, drop_title: bool = True) -> str:
             i += 1
             continue
 
-        # Blockquote: consecutive "> " lines become ONE blockquote. A trailing
-        # em-dash attribution line becomes its own <p> inside it.
+        # Blockquote: consecutive "> " lines become ONE blockquote.
+        # An empty "> " line starts a new stanza (paragraph) inside the quote.
+        # Lines within a stanza are joined with <br> so poetry and
+        # multi-line scripture headers keep their line breaks.
+        # A trailing "—" attribution line becomes its own <p> inside it.
         if stripped.startswith(">"):
-            body: list[str] = []
+            stanzas: list[list[str]] = [[]]
             attrib: str | None = None
             while i < len(lines) and lines[i].strip().startswith(">"):
                 q = re.sub(r"^>\s?", "", lines[i].strip())
                 if q.startswith("—"):
                     attrib = q
+                elif q == "":
+                    stanzas.append([])
                 else:
-                    body.append(q)
+                    stanzas[-1].append(q)
                 i += 1
             parts = []
-            if body:
-                parts.append(f"<p>{inline(' '.join(body))}</p>")
+            for stanza in stanzas:
+                if stanza:
+                    parts.append(
+                        f"<p>{'<br>'.join(inline(line) for line in stanza)}</p>"
+                    )
             if attrib:
                 parts.append(f"<p>{inline(attrib)}</p>")
             out.append(f"<blockquote>{''.join(parts)}</blockquote>")
