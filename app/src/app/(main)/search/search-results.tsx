@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import { Search, FileText } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
@@ -48,7 +48,8 @@ export function SearchResults() {
   const [isLoading, setIsLoading] = useState(false)
   const [hasSearched, setHasSearched] = useState(false)
 
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
+  const requestIdRef = useRef(0)
 
   const performSearch = useCallback(
     async (searchQuery: string) => {
@@ -61,6 +62,7 @@ export function SearchResults() {
 
       setIsLoading(true)
       setHasSearched(true)
+      const requestId = ++requestIdRef.current
 
       const { data, error } = await supabase
         .from('sessions')
@@ -70,6 +72,7 @@ export function SearchResults() {
         .textSearch('search_vector', trimmed, { type: 'websearch' })
         .limit(20)
 
+      if (requestId !== requestIdRef.current) return
       if (error) {
         console.error('Search error:', error)
         setResults([])

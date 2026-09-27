@@ -7,13 +7,14 @@ import { StickyNote, ChevronRight } from 'lucide-react'
 
 export default async function NotesPage() {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
+  const { data: claimsData } = await supabase.auth.getClaims()
+  const userId = claimsData?.claims?.sub ? String(claimsData.claims.sub) : null
+  if (!userId) redirect('/login')
 
   const { data: notes } = await supabase
     .from('user_notes')
     .select('id, content, scope, created_at, updated_at, sessions(id, title, session_number, chapters(id, chapter_number, books(slug, title)))')
-    .eq('user_id', user.id)
+    .eq('user_id', userId)
     .order('updated_at', { ascending: false })
 
   return (

@@ -16,8 +16,9 @@ export default function Error({
         <AlertCircle className="size-12 text-destructive mx-auto" />
         <h1 className="text-2xl font-bold">Something went wrong</h1>
         <p className="text-sm text-muted-foreground">
-          {error.message || 'An unexpected error occurred. Please try again.'}
+          The app could not finish loading. Check your connection and try again.
         </p>
+        {error.digest && <p className="text-xs text-muted-foreground">Reference: {error.digest}</p>}
         <Button onClick={reset}>
           <RotateCcw className="size-4" />
           Try Again

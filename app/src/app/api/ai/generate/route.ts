@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { createClient as createServiceClient } from '@supabase/supabase-js'
+import { createClient as createServerClient } from '@/lib/supabase/server'
+import { sanitizeContentHtml } from '@/lib/sanitize-content'
 import Anthropic from '@anthropic-ai/sdk'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
@@ -32,7 +34,8 @@ Style guidelines:
 Output ONLY the HTML content. No markdown, no code fences, no explanations.`
 
 async function getAnthropicApiKey(): Promise<string> {
-  const supabase = createClient(supabaseUrl, supabaseServiceKey)
+  if (process.env.ANTHROPIC_API_KEY) return process.env.ANTHROPIC_API_KEY
+  const supabase = createServiceClient(supabaseUrl, supabaseServiceKey)
   const { data } = await supabase
     .from('app_settings')
     .select('value')
@@ -43,7 +46,7 @@ async function getAnthropicApiKey(): Promise<string> {
 }
 
 async function updateTokenUsage(input: number, output: number) {
-  const supabase = createClient(supabaseUrl, supabaseServiceKey)
+  const supabase = createServiceClient(supabaseUrl, supabaseServiceKey)
   const { data: existing } = await supabase
     .from('app_settings')
     .select('value')
@@ -66,35 +69,71 @@ async function updateTokenUsage(input: number, output: number) {
 }
 
 export async function POST(req: NextRequest) {
+  let uploadedPaths: string[] = []
+  const serviceClient = createServiceClient(supabaseUrl, supabaseServiceKey)
+
   try {
+    const authClient = await createServerClient()
+    const { data: { user } } = await authClient.auth.getUser()
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+    const { data: profile } = await authClient
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single()
+    if (profile?.role !== 'admin') {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    }
+    const { data: withinLimit } = await authClient.rpc('check_rate_limit', {
+      limit_action: 'ai-generate', max_requests: 5, window_seconds: 3600,
+    })
+    if (!withinLimit) return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 })
+
     const { imageUrls, sessionTitle, bookContext } = await req.json()
 
-    if (!imageUrls || !Array.isArray(imageUrls) || imageUrls.length === 0) {
-      return NextResponse.json({ error: 'No images provided' }, { status: 400 })
+    if (!Array.isArray(imageUrls) || imageUrls.length < 1 || imageUrls.length > 20) {
+      return NextResponse.json({ error: 'Provide between 1 and 20 images' }, { status: 400 })
     }
+    if (!imageUrls.every((path): path is string =>
+      typeof path === 'string' && path.startsWith(`${user.id}/`) && !path.includes('..')
+    )) {
+      return NextResponse.json({ error: 'Invalid upload path' }, { status: 400 })
+    }
+    if ((sessionTitle && typeof sessionTitle !== 'string') || sessionTitle?.length > 200 ||
+        (bookContext && typeof bookContext !== 'string') || bookContext?.length > 500) {
+      return NextResponse.json({ error: 'Invalid content context' }, { status: 400 })
+    }
+    uploadedPaths = imageUrls
 
     const apiKey = await getAnthropicApiKey()
     if (!apiKey) {
       return NextResponse.json({ error: 'Anthropic API key not configured. Go to Admin → Settings.' }, { status: 500 })
     }
 
-    const supabase = createClient(supabaseUrl, supabaseServiceKey)
-
     const imageContents: Anthropic.Messages.ImageBlockParam[] = []
+    let totalBytes = 0
 
     for (const url of imageUrls) {
-      const { data, error } = await supabase.storage
+      const { data, error } = await serviceClient.storage
         .from('temp-uploads')
         .download(url)
 
       if (error || !data) {
-        return NextResponse.json({ error: `Failed to download image: ${url}` }, { status: 500 })
+        return NextResponse.json({ error: 'Failed to read an uploaded image' }, { status: 400 })
       }
 
       const buffer = Buffer.from(await data.arrayBuffer())
+      totalBytes += buffer.byteLength
+      if (buffer.byteLength > 5 * 1024 * 1024 || totalBytes > 50 * 1024 * 1024) {
+        return NextResponse.json({ error: 'Images exceed the upload size limit' }, { status: 413 })
+      }
       const base64 = buffer.toString('base64')
-      const ext = url.split('.').pop()?.toLowerCase() || 'jpeg'
-      const mediaType = ext === 'png' ? 'image/png' : 'image/jpeg'
+      const mediaType = data.type === 'image/png' ? 'image/png' :
+        data.type === 'image/jpeg' ? 'image/jpeg' : null
+      if (!mediaType) {
+        return NextResponse.json({ error: 'Only JPEG and PNG images are supported' }, { status: 415 })
+      }
 
       imageContents.push({
         type: 'image',
@@ -121,17 +160,12 @@ export async function POST(req: NextRequest) {
       ],
     })
 
-    const html = response.content
+    const html = sanitizeContentHtml(response.content
       .filter((block) => block.type === 'text')
       .map((block) => (block as Anthropic.Messages.TextBlock).text)
-      .join('')
+      .join(''))
 
     await updateTokenUsage(response.usage.input_tokens, response.usage.output_tokens)
-
-    // Clean up uploaded images
-    for (const url of imageUrls) {
-      await supabase.storage.from('temp-uploads').remove([url])
-    }
 
     return NextResponse.json({
       html,
@@ -141,7 +175,11 @@ export async function POST(req: NextRequest) {
       },
     })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Unknown error'
-    return NextResponse.json({ error: message }, { status: 500 })
+    console.error('AI generation failed', err)
+    return NextResponse.json({ error: 'Content generation failed' }, { status: 500 })
+  } finally {
+    if (uploadedPaths.length > 0) {
+      await serviceClient.storage.from('temp-uploads').remove(uploadedPaths)
+    }
   }
 }

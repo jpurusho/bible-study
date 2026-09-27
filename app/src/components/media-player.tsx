@@ -16,6 +16,32 @@ function extractGoogleDriveId(url: string): string | null {
   return null
 }
 
+function safeExternalUrl(value: string): string | null {
+  try {
+    const url = new URL(value)
+    return url.protocol === 'https:' ? url.toString() : null
+  } catch {
+    return null
+  }
+}
+
+function safeVideoEmbedUrl(value: string): string | null {
+  try {
+    const url = new URL(value)
+    if (url.hostname === 'www.youtube.com' || url.hostname === 'youtube.com') {
+      const id = url.pathname.startsWith('/embed/') ? url.pathname.split('/')[2] : url.searchParams.get('v')
+      return id && /^[\w-]{6,20}$/.test(id) ? `https://www.youtube.com/embed/${id}` : null
+    }
+    if (url.hostname === 'youtu.be') {
+      const id = url.pathname.slice(1)
+      return /^[\w-]{6,20}$/.test(id) ? `https://www.youtube.com/embed/${id}` : null
+    }
+  } catch {
+    return null
+  }
+  return null
+}
+
 export function MediaPlayer({ media }: { media: SessionMedia }) {
   if (media.type === 'video') {
     const driveId = extractGoogleDriveId(media.url)
@@ -56,12 +82,15 @@ export function MediaPlayer({ media }: { media: SessionMedia }) {
               className="absolute inset-0 w-full h-full"
               allow="autoplay; encrypted-media; fullscreen"
               allowFullScreen
+              sandbox="allow-scripts allow-same-origin allow-presentation"
               title={media.title || 'Video'}
             />
           </div>
         </div>
       )
     }
+    const embedUrl = safeVideoEmbedUrl(media.url)
+    if (!embedUrl) return null
     return (
       <div className="space-y-2">
         {media.title && (
@@ -72,10 +101,11 @@ export function MediaPlayer({ media }: { media: SessionMedia }) {
         )}
         <div className="relative w-full rounded-xl overflow-hidden border border-border bg-muted aspect-[4/3] sm:aspect-video">
           <iframe
-            src={media.url}
+            src={embedUrl}
             className="absolute inset-0 w-full h-full"
             allow="autoplay; encrypted-media; fullscreen"
             allowFullScreen
+            sandbox="allow-scripts allow-same-origin allow-presentation"
             title={media.title || 'Video'}
           />
         </div>
@@ -87,7 +117,9 @@ export function MediaPlayer({ media }: { media: SessionMedia }) {
     const driveId = extractGoogleDriveId(media.url)
     const audioSrc = driveId
       ? `https://drive.google.com/file/d/${driveId}/preview`
-      : media.url
+      : safeExternalUrl(media.url)
+
+    if (!audioSrc) return null
 
     if (driveId) {
       const driveLink = `https://drive.google.com/file/d/${driveId}/view`
@@ -115,6 +147,7 @@ export function MediaPlayer({ media }: { media: SessionMedia }) {
               src={audioSrc}
               className="w-full h-full"
               allow="autoplay"
+              sandbox="allow-scripts allow-same-origin"
               title={media.title || 'Audio'}
             />
           </div>
@@ -138,6 +171,8 @@ export function MediaPlayer({ media }: { media: SessionMedia }) {
   }
 
   if (media.type === 'image') {
+    const imageUrl = safeExternalUrl(media.url)
+    if (!imageUrl) return null
     return (
       <div className="space-y-2">
         {media.title && (
@@ -147,7 +182,7 @@ export function MediaPlayer({ media }: { media: SessionMedia }) {
           </div>
         )}
         <img
-          src={media.url}
+          src={imageUrl}
           alt={media.title || 'Session image'}
           className="rounded-xl border border-border max-w-full h-auto"
         />
@@ -156,6 +191,9 @@ export function MediaPlayer({ media }: { media: SessionMedia }) {
   }
 
   if (media.type === 'slides') {
+    const driveId = extractGoogleDriveId(media.url)
+    if (!driveId) return null
+    const slidesUrl = `https://drive.google.com/file/d/${driveId}/preview`
     return (
       <div className="space-y-2">
         {media.title && (
@@ -166,7 +204,8 @@ export function MediaPlayer({ media }: { media: SessionMedia }) {
         )}
         <div className="aspect-[4/3] rounded-xl overflow-hidden border border-border bg-muted">
           <iframe
-            src={media.url}
+            src={slidesUrl}
+            sandbox="allow-scripts allow-same-origin allow-presentation"
             className="w-full h-full"
             title={media.title || 'Slides'}
           />

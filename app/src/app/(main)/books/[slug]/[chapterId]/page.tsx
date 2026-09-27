@@ -27,6 +27,7 @@ export default async function ChapterPage({
     .from('chapters')
     .select('*')
     .eq('id', chapterId)
+    .eq('book_id', book.id)
     .eq('is_published', true)
     .single()
 

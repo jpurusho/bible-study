@@ -3,7 +3,7 @@ import { updateSession } from '@/lib/supabase/middleware'
 
 const PUBLIC_ROUTES = ['/login', '/pending', '/api/auth/callback', '/callback']
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   if (PUBLIC_ROUTES.some((route) => pathname.startsWith(route))) {
@@ -16,7 +16,11 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl)
   }
 
-  const { supabaseResponse, user } = await updateSession(request)
+  const { supabaseResponse, user, authUnavailable } = await updateSession(request)
+
+  // Do not turn a transient auth-provider failure into a logout. Server layouts
+  // will retry authorization before rendering protected data.
+  if (authUnavailable) return supabaseResponse
 
   if (!user) {
     const loginUrl = request.nextUrl.clone()
@@ -30,6 +34,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|sw\\.js|manifest\\.json|icons/.*|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)',
+    '/((?!api/|_next/static|_next/image|favicon.ico|sw\\.js|manifest\\.json|icons/.*|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)',
   ],
 }

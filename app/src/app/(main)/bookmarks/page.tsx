@@ -7,13 +7,14 @@ import { Bookmark, ChevronRight } from 'lucide-react'
 
 export default async function BookmarksPage() {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
+  const { data: claimsData } = await supabase.auth.getClaims()
+  const userId = claimsData?.claims?.sub ? String(claimsData.claims.sub) : null
+  if (!userId) redirect('/login')
 
   const { data: bookmarks } = await supabase
     .from('user_bookmarks')
     .select('id, created_at, sessions(id, title, scripture_reference, session_number, chapters(id, chapter_number, title, books(slug, title)))')
-    .eq('user_id', user.id)
+    .eq('user_id', userId)
     .order('created_at', { ascending: false })
 
   return (

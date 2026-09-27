@@ -27,7 +27,8 @@ interface ReadingProgressRow {
 export default async function HomePage() {
   const supabase = await createClient()
 
-  const { data: { user } } = await supabase.auth.getUser()
+  const { data: claimsData } = await supabase.auth.getClaims()
+  const userId = claimsData?.claims?.sub ? String(claimsData.claims.sub) : null
 
   const { data: books } = await supabase
     .from('books')
@@ -37,11 +38,11 @@ export default async function HomePage() {
 
   // Fetch the user's most recent reading progress
   let recentProgress: ReadingProgressRow | null = null
-  if (user) {
+  if (userId) {
     const { data } = await supabase
       .from('reading_progress')
       .select('session_id, last_read_at, sessions(id, title, session_number, scripture_reference, chapters(id, chapter_number, title, books(slug, title)))')
-      .eq('user_id', user.id)
+      .eq('user_id', userId)
       .order('last_read_at', { ascending: false })
       .limit(1)
       .single() as unknown as { data: ReadingProgressRow | null }

@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/sonner"
 import { ServiceWorkerRegister } from "@/components/sw-register"
+import { Analytics } from "@vercel/analytics/next"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 import "./globals.css"
 
 const geistSans = Geist({
@@ -48,6 +50,8 @@ export default function RootLayout({
           {children}
           <Toaster />
           <ServiceWorkerRegister />
+          <Analytics />
+          <SpeedInsights />
         </ThemeProvider>
       </body>
     </html>

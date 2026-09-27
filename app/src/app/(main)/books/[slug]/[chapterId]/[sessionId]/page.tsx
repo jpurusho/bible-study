@@ -24,14 +24,15 @@ export default async function SessionPage({
   const { slug, chapterId, sessionId } = await params
   const supabase = await createClient()
 
-  const { data: { user } } = await supabase.auth.getUser()
+  const { data: claimsData } = await supabase.auth.getClaims()
+  const userId = claimsData?.claims?.sub ? String(claimsData.claims.sub) : null
 
   let userRole: 'user' | 'admin' = 'user'
-  if (user) {
+  if (userId) {
     const { data: profile } = await supabase
       .from('profiles')
       .select('role')
-      .eq('id', user.id)
+      .eq('id', userId)
       .single()
     if (profile) userRole = profile.role as 'user' | 'admin'
   }
@@ -49,6 +50,7 @@ export default async function SessionPage({
     .from('chapters')
     .select('*')
     .eq('id', chapterId)
+    .eq('book_id', book.id)
     .eq('is_published', true)
     .single()
 
@@ -58,6 +60,7 @@ export default async function SessionPage({
     .from('sessions')
     .select('*')
     .eq('id', sessionId)
+    .eq('chapter_id', chapterId)
     .eq('is_published', true)
     .single()
 
@@ -103,7 +106,7 @@ export default async function SessionPage({
           <h1 className="text-3xl font-bold tracking-tight">{session.title}</h1>
           <div className="flex items-center gap-3" data-slot="no-print">
             <PrintButton />
-            {user && <BookmarkButton sessionId={sessionId} userId={user.id} />}
+            {userId && <BookmarkButton sessionId={sessionId} userId={userId} />}
           </div>
         </div>
         {session.scripture_reference && (
@@ -140,9 +143,9 @@ export default async function SessionPage({
       </div>
 
       <ScriptureLinker context={contextFromReference(session.scripture_reference)} />
-      {user && <ReadingTracker sessionId={sessionId} userId={user.id} />}
-      {user && <HighlightToolbar sessionId={sessionId} userId={user.id} />}
-      {user && <UserNotes sessionId={sessionId} userId={user.id} />}
+      {userId && <ReadingTracker sessionId={sessionId} userId={userId} />}
+      {userId && <HighlightToolbar sessionId={sessionId} userId={userId} />}
+      {userId && <UserNotes sessionId={sessionId} userId={userId} />}
 
       {quiz && (
         <div className="rounded-xl border border-primary/20 bg-primary/5 p-5" data-slot="no-print">
@@ -161,8 +164,8 @@ export default async function SessionPage({
         </div>
       )}
 
-      {user && (
-        <DiscussionThread sessionId={sessionId} userId={user.id} userRole={userRole} />
+      {userId && (
+        <DiscussionThread sessionId={sessionId} userId={userId} userRole={userRole} />
       )}
 
       <SessionNavigation

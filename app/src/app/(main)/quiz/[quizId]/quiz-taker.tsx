@@ -21,10 +21,8 @@ interface QuizTakerProps {
     question_text: string
     question_type: 'multiple_choice' | 'true_false' | 'fill_blank'
     options: string[] | null
-    correct_answer: string
     display_order: number
   }>
-  userId: string
 }
 
 interface QuizResult {
@@ -33,7 +31,7 @@ interface QuizResult {
   answers: Record<string, { given: string; correct: string; isCorrect: boolean }>
 }
 
-export function QuizTaker({ quiz, questions, userId }: QuizTakerProps) {
+export function QuizTaker({ quiz, questions }: QuizTakerProps) {
   const [answers, setAnswers] = useState<Record<string, string>>({})
   const [result, setResult] = useState<QuizResult | null>(null)
   const [submitting, setSubmitting] = useState(false)
@@ -52,32 +50,10 @@ export function QuizTaker({ quiz, questions, userId }: QuizTakerProps) {
     setSubmitting(true)
 
     try {
-      let score = 0
-      const detailedAnswers: QuizResult['answers'] = {}
-
-      for (const question of questions) {
-        const given = answers[question.id]?.trim() ?? ''
-        const correct = question.correct_answer.trim()
-        const isCorrect =
-          question.question_type === 'fill_blank'
-            ? given.toLowerCase() === correct.toLowerCase()
-            : given === correct
-
-        if (isCorrect) score++
-
-        detailedAnswers[question.id] = { given, correct, isCorrect }
-      }
-
-      const total = questions.length
       const supabase = createClient()
-
-      const { error } = await supabase.from('quiz_attempts').insert({
-        quiz_id: quiz.id,
-        user_id: userId,
-        answers: answers,
-        score,
-        total,
-        completed_at: new Date().toISOString(),
+      const { data, error } = await supabase.rpc('submit_quiz', {
+        target_quiz_id: quiz.id,
+        submitted_answers: answers,
       })
 
       if (error) {
@@ -86,8 +62,9 @@ export function QuizTaker({ quiz, questions, userId }: QuizTakerProps) {
         return
       }
 
-      setResult({ score, total, answers: detailedAnswers })
-      toast.success(`Quiz completed! You scored ${score}/${total}.`)
+      const quizResult = data as unknown as QuizResult
+      setResult(quizResult)
+      toast.success(`Quiz completed! You scored ${quizResult.score}/${quizResult.total}.`)
     } catch {
       toast.error('An unexpected error occurred.')
     } finally {

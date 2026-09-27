@@ -13,17 +13,20 @@ export default async function MainLayout({
   children: React.ReactNode
 }) {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const { data: claimsData } = await supabase.auth.getClaims()
+  const userId = claimsData?.claims?.sub ? String(claimsData.claims.sub) : null
 
-  if (!user) {
+  if (!userId) {
     redirect('/login')
   }
 
-  const { data: profile } = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from('profiles')
     .select('*')
-    .eq('id', user.id)
+    .eq('id', userId)
     .single()
+
+  if (profileError) throw new Error('Profile lookup unavailable')
 
   if (!profile?.is_approved) {
     redirect('/pending')
@@ -39,7 +42,7 @@ export default async function MainLayout({
       />
       <AppHeader profile={profile} />
       <div className="flex-1 w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-16 sm:pb-0">
-        <AnnouncementsBanner userId={user.id} />
+      <AnnouncementsBanner userId={userId} />
         <main>
           {children}
         </main>

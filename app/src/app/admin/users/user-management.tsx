@@ -12,24 +12,23 @@ import type { Database } from '@/types/database'
 
 type Profile = Database['public']['Tables']['profiles']['Row']
 
-export function UserManagement({ initialUsers }: { initialUsers: Profile[] }) {
+export function UserManagement({ initialUsers, currentUserId }: { initialUsers: Profile[]; currentUserId: string }) {
   const [users, setUsers] = useState(initialUsers)
 
   async function updateUser(userId: string, updates: Partial<Profile>) {
     const supabase = createClient()
-    const { error } = await supabase
-      .from('profiles')
-      .update(updates)
-      .eq('id', userId)
+    const { data, error } = await supabase.rpc('admin_update_profile', {
+      target_user_id: userId,
+      new_role: updates.role ?? null,
+      new_is_approved: updates.is_approved ?? null,
+    })
 
     if (error) {
       toast.error('Failed to update user')
       return
     }
 
-    setUsers(prev =>
-      prev.map(u => u.id === userId ? { ...u, ...updates } as Profile : u)
-    )
+    setUsers(prev => prev.map(u => u.id === userId ? (data as Profile) : u))
     toast.success('User updated')
   }
 
@@ -74,6 +73,7 @@ export function UserManagement({ initialUsers }: { initialUsers: Profile[] }) {
                   size="sm"
                   variant="outline"
                   onClick={() => updateUser(user.id, { is_approved: false })}
+                  disabled={user.id === currentUserId}
                 >
                   <X className="h-4 w-4 mr-1" />
                   Revoke
@@ -95,6 +95,7 @@ export function UserManagement({ initialUsers }: { initialUsers: Profile[] }) {
                   variant="ghost"
                   onClick={() => updateUser(user.id, { role: 'user' })}
                   title="Remove Admin: user can only read content, take notes, and participate in discussions"
+                  disabled={user.id === currentUserId}
                 >
                   <ShieldOff className="h-4 w-4 text-primary" />
                 </Button>

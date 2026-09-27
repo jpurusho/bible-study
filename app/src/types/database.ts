@@ -594,7 +594,32 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      admin_update_profile: {
+        Args: { target_user_id: string; new_role?: string | null; new_is_approved?: boolean | null }
+        Returns: Database['public']['Tables']['profiles']['Row']
+      }
+      check_rate_limit: {
+        Args: { limit_action: string; max_requests: number; window_seconds: number }
+        Returns: boolean
+      }
+      get_published_quiz_questions: {
+        Args: { target_quiz_id: string }
+        Returns: Array<{
+          id: string
+          question_text: string
+          question_type: string
+          options: Json | null
+          display_order: number
+        }>
+      }
+      reorder_books: {
+        Args: { ordered_book_ids: string[] }
+        Returns: undefined
+      }
+      submit_quiz: {
+        Args: { target_quiz_id: string; submitted_answers: Json }
+        Returns: Json
+      }
     }
     Enums: {
       [_ in never]: never

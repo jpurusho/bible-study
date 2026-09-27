@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { createClient as createServiceClient } from '@supabase/supabase-js'
+import { createClient as createServerClient } from '@/lib/supabase/server'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
 
 async function getEsvApiKey(): Promise<string> {
+  if (process.env.ESV_API_KEY) return process.env.ESV_API_KEY
   try {
-    const supabase = createClient(supabaseUrl, supabaseServiceKey)
+    const supabase = createServiceClient(supabaseUrl, supabaseServiceKey)
     const { data } = await supabase
       .from('app_settings')
       .select('value')
@@ -20,7 +22,7 @@ async function getEsvApiKey(): Promise<string> {
 }
 
 async function getCachedVerse(reference: string, translation: string) {
-  const supabase = createClient(supabaseUrl, supabaseServiceKey)
+  const supabase = createServiceClient(supabaseUrl, supabaseServiceKey)
   const { data } = await supabase
     .from('scripture_cache')
     .select('content')
@@ -31,18 +33,33 @@ async function getCachedVerse(reference: string, translation: string) {
 }
 
 async function cacheVerse(reference: string, translation: string, content: string) {
-  const supabase = createClient(supabaseUrl, supabaseServiceKey)
+  const supabase = createServiceClient(supabaseUrl, supabaseServiceKey)
   await supabase
     .from('scripture_cache')
     .upsert({ reference, translation, content }, { onConflict: 'reference,translation' })
 }
 
 export async function GET(req: NextRequest) {
-  const reference = req.nextUrl.searchParams.get('ref')
-  const translation = req.nextUrl.searchParams.get('translation') || 'esv'
+  const authClient = await createServerClient()
+  const { data: { user } } = await authClient.auth.getUser()
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  if (!reference) {
-    return NextResponse.json({ error: 'ref parameter required' }, { status: 400 })
+  const { data: profile } = await authClient
+    .from('profiles')
+    .select('is_approved')
+    .eq('id', user.id)
+    .single()
+  if (!profile?.is_approved) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  const { data: withinLimit } = await authClient.rpc('check_rate_limit', {
+    limit_action: 'bible-lookup', max_requests: 60, window_seconds: 60,
+  })
+  if (!withinLimit) return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 })
+
+  const reference = req.nextUrl.searchParams.get('ref')?.trim()
+  const translation = 'esv'
+
+  if (!reference || reference.length > 100 || !/^[1-3A-Za-z .,:;\-–]+$/.test(reference)) {
+    return NextResponse.json({ error: 'Valid ref parameter required' }, { status: 400 })
   }
 
   const cached = await getCachedVerse(reference, translation)
@@ -59,6 +76,7 @@ export async function GET(req: NextRequest) {
     const url = `https://api.esv.org/v3/passage/text/?q=${encodeURIComponent(reference)}&include-headings=false&include-footnotes=false&include-verse-numbers=true&include-short-copyright=false&include-passage-references=false&indent-paragraphs=0`
     const res = await fetch(url, {
       headers: { Authorization: `Token ${apiKey}` },
+      signal: AbortSignal.timeout(10_000),
     })
     if (!res.ok) {
       return NextResponse.json({ error: 'Verse not found' }, { status: 404 })
@@ -69,7 +87,10 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Verse not found' }, { status: 404 })
     }
 
-    await cacheVerse(data.canonical || reference, translation, text)
+    await cacheVerse(reference, translation, text)
+    if (data.canonical && data.canonical !== reference) {
+      await cacheVerse(data.canonical, translation, text)
+    }
 
     return NextResponse.json({
       text,

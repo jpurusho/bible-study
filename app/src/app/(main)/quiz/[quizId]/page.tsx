@@ -11,11 +11,10 @@ export default async function QuizPage({
   const { quizId } = await params
   const supabase = await createClient()
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const { data: claimsData } = await supabase.auth.getClaims()
+  const userId = claimsData?.claims?.sub ? String(claimsData.claims.sub) : null
 
-  if (!user) {
+  if (!userId) {
     notFound()
   }
 
@@ -30,11 +29,9 @@ export default async function QuizPage({
     notFound()
   }
 
-  const { data: questions } = await supabase
-    .from('quiz_questions')
-    .select('id, question_text, question_type, options, correct_answer, display_order')
-    .eq('quiz_id', quizId)
-    .order('display_order', { ascending: true })
+  const { data: questions } = await supabase.rpc('get_published_quiz_questions', {
+    target_quiz_id: quizId,
+  })
 
   if (!questions || questions.length === 0) {
     notFound()
@@ -51,8 +48,11 @@ export default async function QuizPage({
       />
       <QuizTaker
         quiz={quiz}
-        questions={questions.map(q => ({ ...q, options: q.options as string[] | null }))}
-        userId={user.id}
+        questions={questions.map(q => ({
+          ...q,
+          question_type: q.question_type as 'multiple_choice' | 'true_false' | 'fill_blank',
+          options: q.options as string[] | null,
+        }))}
       />
     </div>
   )

@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils'
+import { sanitizeContentHtml } from '@/lib/sanitize-content'
 
 interface ContentRendererProps {
   html: string
@@ -17,7 +18,7 @@ function addHeadingIds(html: string): string {
 }
 
 export function ContentRenderer({ html, className }: ContentRendererProps) {
-  const processedHtml = addHeadingIds(html)
+  const processedHtml = addHeadingIds(sanitizeContentHtml(html))
 
   return (
     <div className="rounded-2xl bg-card/50 border border-border/50 p-6 sm:p-8 shadow-sm">
