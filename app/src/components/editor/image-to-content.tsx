@@ -36,7 +36,10 @@ export function ImageToContent({ sessionTitle, bookContext, onGenerated }: Image
     if (valid.length !== selected.length) {
       toast.error('Only JPEG and PNG images are supported')
     }
-    setFiles((prev) => [...prev, ...valid])
+    const withinSize = valid.filter((file) => file.size <= 5 * 1024 * 1024)
+    if (withinSize.length !== valid.length) toast.error('Each image must be 5 MB or smaller')
+    setFiles((prev) => [...prev, ...withinSize].slice(0, 20))
+    if (files.length + withinSize.length > 20) toast.error('A maximum of 20 pages is supported')
   }
 
   function removeFile(index: number) {
@@ -50,6 +53,11 @@ export function ImageToContent({ sessionTitle, bookContext, onGenerated }: Image
     }
 
     const supabase = createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+      toast.error('Please sign in again')
+      return
+    }
     setUploading(true)
     setProgress('Uploading images...')
 
@@ -60,7 +68,7 @@ export function ImageToContent({ sessionTitle, bookContext, onGenerated }: Image
         setProgress(`Uploading image ${i + 1} of ${files.length}...`)
         const file = files[i]
         const ext = file.name.split('.').pop() || 'jpg'
-        const path = `${Date.now()}_${i}.${ext}`
+        const path = `${user.id}/${crypto.randomUUID()}_${i}.${ext}`
 
         const { error } = await supabase.storage
           .from('temp-uploads')

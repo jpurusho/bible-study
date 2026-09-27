@@ -153,6 +153,7 @@ export function ScriptureLinker({ context = {} }: ScriptureLinkerProps = {}) {
           <button
             onClick={() => setExpandedVerse(null)}
             className="text-muted-foreground hover:text-foreground"
+            aria-label="Close scripture passage"
           >
             <X className="size-4" />
           </button>

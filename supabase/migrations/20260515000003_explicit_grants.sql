@@ -24,7 +24,6 @@ GRANT SELECT ON public.announcements TO authenticated;
 GRANT SELECT ON public.app_settings TO authenticated;
 GRANT SELECT ON public.profiles TO authenticated;
 GRANT SELECT ON public.scripture_cache TO authenticated;
-GRANT SELECT ON public.preapproved_emails TO authenticated;
 GRANT SELECT ON public.discussion_posts TO authenticated;
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.user_notes TO authenticated;
@@ -45,6 +44,5 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON public.session_media TO authenticated;
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.quizzes TO authenticated;
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.quiz_questions TO authenticated;
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.announcements TO authenticated;
-GRANT SELECT, INSERT, UPDATE, DELETE ON public.preapproved_emails TO authenticated;
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.app_settings TO authenticated;
 GRANT INSERT ON public.scripture_cache TO authenticated;

@@ -20,7 +20,13 @@ export default async function AdminSettingsPage() {
         <h1 className="text-2xl font-bold">Admin Settings</h1>
         <p className="text-muted-foreground">Configure API keys and integrations.</p>
       </div>
-      <SettingsManager initialSettings={settingsMap} />
+      <SettingsManager
+        aiUsage={settingsMap.ai_usage ? JSON.parse(settingsMap.ai_usage) : null}
+        configured={{
+          anthropic: Boolean(process.env.ANTHROPIC_API_KEY || settingsMap.anthropic_api_key),
+          esv: Boolean(process.env.ESV_API_KEY || settingsMap.esv_api_key),
+        }}
+      />
     </div>
   )
 }

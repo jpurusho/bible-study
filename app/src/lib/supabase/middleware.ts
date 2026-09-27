@@ -29,9 +29,18 @@ export async function updateSession(request: NextRequest) {
     }
   )
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  try {
+    const { data, error } = await supabase.auth.getClaims()
+    if (error) return { supabaseResponse, user: null, authUnavailable: false }
 
-  return { supabaseResponse, user }
+    const subject = data?.claims?.sub
+    return {
+      supabaseResponse,
+      user: subject ? { id: String(subject) } : null,
+      authUnavailable: false,
+    }
+  } catch (error) {
+    console.error('Authentication verification unavailable', error)
+    return { supabaseResponse, user: null, authUnavailable: true }
+  }
 }

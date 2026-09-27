@@ -22,6 +22,7 @@ export function UserNotes({ sessionId, userId }: UserNotesProps) {
   const [isLoading, setIsLoading] = useState(false)
   const debounceRef = useRef<NodeJS.Timeout | null>(null)
   const supabase = useMemo(() => createClient(), [])
+  const draftKey = `bible-study-note-draft:${userId}:${sessionId}`
 
   const CHARACTER_LIMIT = 5000
 
@@ -42,12 +43,14 @@ export function UserNotes({ sessionId, userId }: UserNotesProps) {
       } else if (data) {
         setContent(data.content ?? '')
         setNoteId(data.id)
+      } else {
+        setContent(localStorage.getItem(draftKey) ?? '')
       }
       setIsLoading(false)
     }
 
     fetchNote()
-  }, [sessionId, userId, supabase])
+  }, [draftKey, sessionId, userId, supabase])
 
   // Save/upsert note
   const saveNote = useCallback(
@@ -88,9 +91,10 @@ export function UserNotes({ sessionId, userId }: UserNotesProps) {
         toast.error(`Failed to save note: ${error.message}`)
       } else {
         setStatus('saved')
+        localStorage.removeItem(draftKey)
       }
     },
-    [noteId, sessionId, userId, supabase]
+    [draftKey, noteId, sessionId, userId, supabase]
   )
 
   // Handle content change with debounce
@@ -99,6 +103,7 @@ export function UserNotes({ sessionId, userId }: UserNotesProps) {
     if (value.length > CHARACTER_LIMIT) return
 
     setContent(value)
+    localStorage.setItem(draftKey, value)
     setStatus('idle')
 
     if (debounceRef.current) {
@@ -112,6 +117,7 @@ export function UserNotes({ sessionId, userId }: UserNotesProps) {
 
   // Delete note
   const handleDelete = async () => {
+    if (!window.confirm('Delete this note permanently?')) return
     if (!noteId) {
       setContent('')
       return
@@ -128,6 +134,7 @@ export function UserNotes({ sessionId, userId }: UserNotesProps) {
       setContent('')
       setNoteId(null)
       setStatus('idle')
+      localStorage.removeItem(draftKey)
     }
   }
 
@@ -169,6 +176,7 @@ export function UserNotes({ sessionId, userId }: UserNotesProps) {
               <Textarea
                 value={content}
                 onChange={handleChange}
+                onBlur={() => void saveNote(content)}
                 placeholder="Write your personal notes for this session..."
                 className="min-h-32 resize-y"
                 maxLength={CHARACTER_LIMIT}

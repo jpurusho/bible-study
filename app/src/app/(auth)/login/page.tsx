@@ -9,13 +9,14 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { Suspense } from 'react'
+import { safeRedirectPath } from '@/lib/safe-redirect'
 
 function LoginForm() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const error = searchParams.get('error')
   const code = searchParams.get('code')
-  const redirectTo = searchParams.get('redirectTo') ?? '/home'
+  const redirectTo = safeRedirectPath(searchParams.get('redirectTo'))
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)

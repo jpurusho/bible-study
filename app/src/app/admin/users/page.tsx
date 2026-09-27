@@ -3,6 +3,8 @@ import { UserManagement } from './user-management'
 
 export default async function AdminUsersPage() {
   const supabase = await createClient()
+  const { data: claimsData } = await supabase.auth.getClaims()
+  const currentUserId = claimsData?.claims?.sub ? String(claimsData.claims.sub) : ''
 
   const { data: users } = await supabase
     .from('profiles')
@@ -20,7 +22,7 @@ export default async function AdminUsersPage() {
         <p><strong>Shield icon (outlined):</strong> Tap to make this user an Admin (can manage content, users, announcements)</p>
         <p><strong>Shield icon (filled/colored):</strong> This user is currently an Admin. Tap to remove admin privileges</p>
       </div>
-      <UserManagement initialUsers={users ?? []} />
+      <UserManagement initialUsers={users ?? []} currentUserId={currentUserId} />
     </div>
   )
 }

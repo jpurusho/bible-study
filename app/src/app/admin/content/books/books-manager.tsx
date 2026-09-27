@@ -104,32 +104,32 @@ export function BooksManager({ initialBooks }: BooksManagerProps) {
 
   async function handleMoveUp(index: number) {
     if (index === 0) return
-    const updated = [...books]
-    const temp = updated[index - 1].display_order
-    updated[index - 1].display_order = updated[index].display_order
-    updated[index].display_order = temp
+    const previous = books
+    const updated = books.map((book) => ({ ...book }))
     ;[updated[index - 1], updated[index]] = [updated[index], updated[index - 1]]
+    updated.forEach((book, position) => { book.display_order = position + 1 })
 
     setBooks(updated)
-    await Promise.all([
-      supabase.from('books').update({ display_order: updated[index].display_order }).eq('id', updated[index].id),
-      supabase.from('books').update({ display_order: updated[index - 1].display_order }).eq('id', updated[index - 1].id),
-    ])
+    const { error } = await supabase.rpc('reorder_books', { ordered_book_ids: updated.map((book) => book.id) })
+    if (error) {
+      setBooks(previous)
+      toast.error('Could not reorder books')
+    }
   }
 
   async function handleMoveDown(index: number) {
     if (index === books.length - 1) return
-    const updated = [...books]
-    const temp = updated[index + 1].display_order
-    updated[index + 1].display_order = updated[index].display_order
-    updated[index].display_order = temp
+    const previous = books
+    const updated = books.map((book) => ({ ...book }))
     ;[updated[index + 1], updated[index]] = [updated[index], updated[index + 1]]
+    updated.forEach((book, position) => { book.display_order = position + 1 })
 
     setBooks(updated)
-    await Promise.all([
-      supabase.from('books').update({ display_order: updated[index].display_order }).eq('id', updated[index].id),
-      supabase.from('books').update({ display_order: updated[index + 1].display_order }).eq('id', updated[index + 1].id),
-    ])
+    const { error } = await supabase.rpc('reorder_books', { ordered_book_ids: updated.map((book) => book.id) })
+    if (error) {
+      setBooks(previous)
+      toast.error('Could not reorder books')
+    }
   }
 
   function openCreate() {
