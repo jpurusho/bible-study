@@ -3,7 +3,7 @@ import { updateSession } from '@/lib/supabase/middleware'
 
 const PUBLIC_ROUTES = ['/login', '/pending', '/api/auth/callback', '/callback']
 
-export async function proxy(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   if (PUBLIC_ROUTES.some((route) => pathname.startsWith(route))) {
