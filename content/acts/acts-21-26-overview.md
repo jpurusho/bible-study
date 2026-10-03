@@ -135,6 +135,6 @@ Three threads run through all five hearings, and they are worth tracing with the
 
 **The commentary's own roadmap** appears on pages 334–335 and is quoted verbatim in the Scripture Reference block above. Note that it identifies the Sanhedrin speech as 23:1-6; the Acts 23 session treats the fuller unit 23:1-10.
 
-**Related sessions.** Acts 21 (pages 334–340) · Acts 22 (pages 340–349) · Acts 23 (pages 349–360). Acts 24 material appears on pages 360–365 and is summarized here under Speech 3, but has not yet been built out as its own session.
+**Related sessions.** Acts 21 (pages 334–340) · Acts 22 (pages 340–349) · Acts 23 (pages 349–360) · Acts 24 (pages 360–365).
 
 **Works cited in this session:** Johnson, *Let's Study Acts* · Marshall, *Acts of the Apostles* · Bock, *Acts* · Gangel, *Acts* · Schreiner, "Living as Disciples".

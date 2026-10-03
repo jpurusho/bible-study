@@ -30,6 +30,7 @@ yarn-error.log*
 
 # OCR scratch space (page photos + verbatim source transcripts)
 .ocr-work/
+text_pages/
 
 # supabase local
 supabase/.temp/

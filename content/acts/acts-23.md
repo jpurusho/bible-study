@@ -76,6 +76,8 @@ Once Paul is back in the barracks, left to nurse his wounds and ponder what just
 
 ### Point 5: God Uses an Unnamed Nephew to Thwart a Plot (23:12-22)
 
+In chapters 23–24 Paul faces situations that look impossible. John Stott observed that Paul's chances of surviving the attacks of the angry Jews and mighty Romans resemble that of a butterfly before a steamroller (*Message of Acts*, 358). Yet Paul remains calm and courageous, submitting to the sovereign plan and power of God.
+
 The day after Jesus reassured Paul in the barracks, more than forty angry Jews hatched a plot to kill him (vv. 12-13; cf. 9:24; 20:19). Their oath not to eat or drink until they had murdered the apostle meant they intended to act quickly. They approached the chief priests and elders—avoiding the minority Pharisees, who had defended Paul—and the Sanhedrin agreed to act as if they were reconvening to discuss Paul's crimes, so that the assassins could intercept and execute him on the way. So much for justice and law within the Sanhedrin (Gangel, *Acts*, 390)! These terrorists, like many modern-day terrorists, would stop at nothing to achieve their selfish, religious goals.
 
 God, however, would thwart the scheme—and he used a young man to do it. John Polhill says it's anyone's guess how old the nephew was, but perhaps he was in his late teens (*Acts*, 472); in light of how Lysias takes him "by the hand" in verse 19, he may be just a little boy (Schreiner, "Living as Disciples"). Regardless, this unnamed nephew becomes an incredibly important advocate, one clearly raised up "for such a time as this" (Esth 4:14).
@@ -163,7 +165,7 @@ I. God Is in Control Even When We're Going through Trials (23:12-35)
    A. God uses an unnamed nephew to thwart a plot (23:12-22)
    B. God uses Lysias to protect Paul (23:23-30)
    C. God uses a Roman army to transport Paul (23:31-35)
-II. We Can Be Faithful Witnesses Even in Stressful Situations (24:1-27) — Acts 24 material, not included here
+II. We Can Be Faithful Witnesses Even in Stressful Situations (24:1-27) — covered in the Acts 24 session
 
 **Memory aid.** The commentary labels Paul's three reactions "paper," "rock," and "scissors": paper = his Roman citizenship (22:22-29), rock = his rebuke of the high priest (22:30–23:5), scissors = dividing the council over the resurrection (23:6-10).
 

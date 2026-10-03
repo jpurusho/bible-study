@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient as createServiceClient } from '@supabase/supabase-js'
 import { createClient as createServerClient } from '@/lib/supabase/server'
+import { normalizeBibleReference } from '@/lib/bible-reference'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -55,10 +56,10 @@ export async function GET(req: NextRequest) {
   })
   if (!withinLimit) return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 })
 
-  const reference = req.nextUrl.searchParams.get('ref')?.trim()
+  const reference = normalizeBibleReference(req.nextUrl.searchParams.get('ref'))
   const translation = 'esv'
 
-  if (!reference || reference.length > 100 || !/^[1-3A-Za-z .,:;\-–]+$/.test(reference)) {
+  if (!reference) {
     return NextResponse.json({ error: 'Valid ref parameter required' }, { status: 400 })
   }
 
