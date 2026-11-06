@@ -6,6 +6,9 @@ import Anthropic from '@anthropic-ai/sdk'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
+if (!supabaseServiceKey) {
+  throw new Error('SUPABASE_SERVICE_ROLE_KEY is not configured')
+}
 
 const SYSTEM_PROMPT = `You are a Bible study content formatter. You receive images of book pages from a Bible commentary or study guide. Your job is to transcribe and format the content into beautiful, well-structured HTML for a Bible study web application.
 
@@ -141,7 +144,7 @@ export async function POST(req: NextRequest) {
       })
     }
 
-    const userPrompt = `Please transcribe and format these ${imageUrls.length} page(s) into study notes HTML.${sessionTitle ? ` The session title is: "${sessionTitle}".` : ''}${bookContext ? ` Context: ${bookContext}` : ''}`
+    const userPrompt = `Please transcribe and format these ${imageUrls.length} page(s) into study notes HTML.${sessionTitle ? `\n\nSession title: <session_title>${sessionTitle}</session_title>` : ''}${bookContext ? `\n\nContext: <context>${bookContext}</context>` : ''}`
 
     const client = new Anthropic({ apiKey })
 

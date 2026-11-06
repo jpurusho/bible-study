@@ -12,6 +12,9 @@ describe('safeRedirectPath', () => {
     '/\\example.com',
     'javascript:alert(1)',
     null,
+    '/%2F%2Fevil.com',
+    '/%2Fhome',
+    '/ /evil.com',
   ])('rejects unsafe redirect %s', (value) => {
     expect(safeRedirectPath(value)).toBe('/home')
   })

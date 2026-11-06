@@ -5,6 +5,9 @@ import { normalizeBibleReference } from '@/lib/bible-reference'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
+if (!supabaseServiceKey) {
+  throw new Error('SUPABASE_SERVICE_ROLE_KEY is not configured')
+}
 
 async function getEsvApiKey(): Promise<string> {
   if (process.env.ESV_API_KEY) return process.env.ESV_API_KEY

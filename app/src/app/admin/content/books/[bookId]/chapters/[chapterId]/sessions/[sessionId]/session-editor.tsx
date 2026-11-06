@@ -12,6 +12,7 @@ import { ImageToContent } from '@/components/editor/image-to-content'
 import { Save, Plus, Trash2, Video, Music, Image as ImageIcon, FileText, Code, Eye, EyeOff, Megaphone, Upload } from 'lucide-react'
 import { toast } from 'sonner'
 import { markdownToHtml } from '@/lib/markdown-to-html'
+import { sanitizeContentHtml } from '@/lib/sanitize-content'
 import type { Database } from '@/types/database'
 
 type Session = Database['public']['Tables']['sessions']['Row']
@@ -37,7 +38,7 @@ export function SessionEditor({ session, initialMedia }: SessionEditorProps) {
     setSaving(true)
     const { error } = await supabase
       .from('sessions')
-      .update({ content, updated_at: new Date().toISOString() })
+      .update({ content: sanitizeContentHtml(content), updated_at: new Date().toISOString() })
       .eq('id', session.id)
 
     if (error) {
