@@ -2,6 +2,14 @@
 
 import type { Editor } from '@tiptap/react'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog'
 import {
   Bold,
   Italic,
@@ -25,19 +33,27 @@ import {
   Highlighter,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 
 interface EditorToolbarProps {
   editor: Editor
 }
 
 export function EditorToolbar({ editor }: EditorToolbarProps) {
+  const [imageUrlDialogOpen, setImageUrlDialogOpen] = useState(false)
+  const [imageUrlInput, setImageUrlInput] = useState('')
+
   const addImage = useCallback(() => {
-    const url = window.prompt('Image URL:')
-    if (url) {
-      editor.chain().focus().setImage({ src: url }).run()
+    setImageUrlDialogOpen(true)
+  }, [])
+
+  const confirmAddImage = useCallback(() => {
+    if (imageUrlInput) {
+      editor.chain().focus().setImage({ src: imageUrlInput }).run()
     }
-  }, [editor])
+    setImageUrlInput('')
+    setImageUrlDialogOpen(false)
+  }, [editor, imageUrlInput])
 
   const setLink = useCallback(() => {
     const previousUrl = editor.getAttributes('link').href
@@ -51,6 +67,7 @@ export function EditorToolbar({ editor }: EditorToolbarProps) {
   }, [editor])
 
   return (
+    <>
     <div className="flex flex-wrap items-center gap-0.5 border-b border-border p-1.5 bg-muted/30">
       <ToolbarGroup>
         <ToolbarButton
@@ -209,6 +226,32 @@ export function EditorToolbar({ editor }: EditorToolbarProps) {
         </ToolbarButton>
       </div>
     </div>
+
+    <Dialog open={imageUrlDialogOpen} onOpenChange={(open) => { setImageUrlDialogOpen(open); if (!open) setImageUrlInput('') }}>
+      <DialogContent className="sm:max-w-sm">
+        <DialogHeader>
+          <DialogTitle>Insert Image</DialogTitle>
+        </DialogHeader>
+        <Input
+          placeholder="https://..."
+          value={imageUrlInput}
+          onChange={(e) => setImageUrlInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') { e.preventDefault(); confirmAddImage() }
+          }}
+          autoFocus
+        />
+        <DialogFooter>
+          <Button variant="outline" onClick={() => { setImageUrlInput(''); setImageUrlDialogOpen(false) }}>
+            Cancel
+          </Button>
+          <Button onClick={confirmAddImage} disabled={!imageUrlInput}>
+            Insert
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+    </>
   )
 }
 
