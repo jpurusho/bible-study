@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Bookmark } from 'lucide-react'
@@ -15,7 +15,7 @@ interface BookmarkButtonProps {
 export function BookmarkButton({ sessionId, userId }: BookmarkButtonProps) {
   const [isBookmarked, setIsBookmarked] = useState(false)
   const [loading, setLoading] = useState(true)
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
 
   useEffect(() => {
     async function check() {

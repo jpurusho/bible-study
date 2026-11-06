@@ -27,7 +27,7 @@ export default async function NotesPage() {
 
       {notes && notes.length > 0 ? (
         <div className="space-y-3">
-          {notes.map((note) => {
+          {notes.filter((n) => n.sessions != null).map((note) => {
             const session = note.sessions as unknown as {
               id: string
               title: string
@@ -39,7 +39,7 @@ export default async function NotesPage() {
               }
             } | null
 
-            const href = session
+            const href = session?.chapters?.books?.slug
               ? `/books/${session.chapters.books.slug}/${session.chapters.id}/${session.id}`
               : '#'
 
@@ -52,7 +52,7 @@ export default async function NotesPage() {
                       <CardTitle className="text-base">
                         {session ? session.title : 'Global Note'}
                       </CardTitle>
-                      {session && (
+                      {session?.chapters?.books && (
                         <CardDescription>
                           {session.chapters.books.title} &gt; Ch. {session.chapters.chapter_number} &gt; Session {session.session_number}
                         </CardDescription>

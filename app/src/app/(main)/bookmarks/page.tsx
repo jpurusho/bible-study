@@ -40,7 +40,7 @@ export default async function BookmarksPage() {
                 books: { slug: string; title: string }
               }
             }
-            if (!session) return null
+            if (!session || !session.chapters || !session.chapters.books) return null
             const chapter = session.chapters
             const book = chapter.books
 

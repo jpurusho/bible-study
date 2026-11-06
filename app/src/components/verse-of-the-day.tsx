@@ -5,7 +5,7 @@ function getVerseForToday(): { text: string; ref: string } {
   const start = new Date(2025, 0, 1).getTime()
   const now = new Date().getTime()
   const dayIndex = Math.floor((now - start) / (1000 * 60 * 60 * 24))
-  return DAILY_VERSES[dayIndex % DAILY_VERSES.length]
+  return DAILY_VERSES[Math.abs(dayIndex) % DAILY_VERSES.length]
 }
 
 export function VerseOfTheDay() {
