@@ -15,8 +15,10 @@ export default async function MainLayout({
   children: React.ReactNode
 }) {
   const supabase = await createClient()
-  const { data: claimsData } = await supabase.auth.getClaims()
-  const userId = claimsData?.claims?.sub ? String(claimsData.claims.sub) : null
+  // getUser() is authoritative — middleware already refreshed the token so this
+  // reads the valid session that was just written to cookies.
+  const { data: { user } } = await supabase.auth.getUser()
+  const userId = user?.id ?? null
 
   if (!userId) {
     redirect('/login')

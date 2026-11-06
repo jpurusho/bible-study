@@ -30,13 +30,31 @@ export async function updateSession(request: NextRequest) {
   )
 
   try {
-    const { data, error } = await supabase.auth.getClaims()
-    if (error) return { supabaseResponse, user: null, authUnavailable: false }
+    // getUser() makes a network call to Supabase Auth and automatically uses
+    // the refresh token to issue a new access token when the current one has
+    // expired. getClaims() only reads the JWT locally and never refreshes —
+    // sessions appeared to expire after ~1 hour even though the 60-day refresh
+    // token was still valid. The setAll callback above writes the new tokens
+    // back to the response cookies so the browser keeps the session alive.
+    const { data: { user }, error } = await supabase.auth.getUser()
 
-    const subject = data?.claims?.sub
+    if (error) {
+      // Distinguish a missing/invalid session (redirect to login) from a
+      // transient network failure (let the request through so the server
+      // component can retry, same as the authUnavailable path below).
+      const isNetworkError =
+        error.name !== 'AuthSessionMissingError' &&
+        !('status' in error && (error as { status: number }).status === 401)
+      if (isNetworkError) {
+        console.error('Auth service temporarily unavailable', error)
+        return { supabaseResponse, user: null, authUnavailable: true }
+      }
+      return { supabaseResponse, user: null, authUnavailable: false }
+    }
+
     return {
       supabaseResponse,
-      user: subject ? { id: String(subject) } : null,
+      user: user ? { id: user.id } : null,
       authUnavailable: false,
     }
   } catch (error) {
