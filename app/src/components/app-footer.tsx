@@ -7,6 +7,9 @@ export function AppFooter() {
         </p>
         <p className="text-xs text-muted-foreground/70">
           Psalm 119:162 &middot; CCI San Ramon Bible Study &copy; {new Date().getFullYear()}
+          {process.env.NEXT_PUBLIC_APP_VERSION && (
+            <span className="ml-2 opacity-50">v{process.env.NEXT_PUBLIC_APP_VERSION}</span>
+          )}
         </p>
       </div>
     </footer>

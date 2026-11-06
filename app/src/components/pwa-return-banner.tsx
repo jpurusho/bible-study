@@ -26,6 +26,9 @@ export function PwaReturnBanner() {
       // iOS Safari standalone flag
       (navigator as Navigator & { standalone?: boolean }).standalone === true
 
+    // Show the banner whenever the user is NOT in standalone/PWA mode.
+    // This covers: Safari on iOS, Chrome on iOS, Chrome on Android —
+    // any browser where the OAuth callback ran outside the installed app.
     if (!isStandalone) setShow(true)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname])
@@ -40,7 +43,8 @@ export function PwaReturnBanner() {
       <div className="flex-1 text-sm leading-snug">
         <p className="font-semibold">Signed in successfully!</p>
         <p className="mt-0.5 opacity-90">
-          To open the app, tap the <strong>Bible Study</strong> icon on your home screen.
+          If you have the <strong>Bible Study</strong> shortcut on your home screen,
+          open it from there to continue. Or keep using this browser tab.
         </p>
       </div>
       <button
