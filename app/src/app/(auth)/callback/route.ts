@@ -11,7 +11,12 @@ export async function GET(request: Request) {
     const supabase = await createClient()
     const { error } = await supabase.auth.exchangeCodeForSession(code)
     if (!error) {
-      return NextResponse.redirect(`${origin}${redirectTo}`)
+      // Tag the redirect so the client can detect it arrived from OAuth.
+      // Used to show "return to app" guidance when the callback ran in a
+      // regular browser tab rather than the installed PWA (iOS cookie isolation).
+      const dest = new URL(`${origin}${redirectTo}`)
+      dest.searchParams.set('auth', 'done')
+      return NextResponse.redirect(dest.toString())
     }
   }
 

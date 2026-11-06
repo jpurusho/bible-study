@@ -71,9 +71,17 @@ function LoginForm() {
         </CardHeader>
         <CardContent className="space-y-4">
           {(error || authError) && (
-            <p className="text-sm text-destructive text-center">
-              {authError || 'Authentication failed. Please try again.'}
-            </p>
+            <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
+              <p className="font-medium">
+                {authError || 'Sign-in was not completed.'}
+              </p>
+              {error === 'auth_failed' && (
+                <p className="mt-1 text-xs opacity-80">
+                  If you opened this app from your home screen, try signing in
+                  again — Google may have finished in a different browser tab.
+                </p>
+              )}
+            </div>
           )}
           <Button
             onClick={signInWithGoogle}

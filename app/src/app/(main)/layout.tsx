@@ -6,6 +6,8 @@ import { BackToTop } from '@/components/back-to-top'
 import { BottomNav } from '@/components/bottom-nav'
 import { AppFooter } from '@/components/app-footer'
 import { ThemeLoader } from '@/components/theme-loader'
+import { Suspense } from 'react'
+import { PwaReturnBanner } from '@/components/pwa-return-banner'
 
 export default async function MainLayout({
   children,
@@ -40,6 +42,7 @@ export default async function MainLayout({
         savedTheme={themePrefs?.mode ?? null}
         savedFontSize={themePrefs?.fontSize ?? null}
       />
+      <Suspense><PwaReturnBanner /></Suspense>
       <AppHeader profile={profile} />
       <div className="flex-1 w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-16 sm:pb-0">
       <AnnouncementsBanner userId={userId} />
