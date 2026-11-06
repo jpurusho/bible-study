@@ -115,6 +115,16 @@ export function UserNotes({ sessionId, userId }: UserNotesProps) {
     }, 2000)
   }
 
+  // Cancel the debounce timer on blur so only one save fires, preventing
+  // a race condition where both the timer and onBlur call saveNote concurrently.
+  const handleBlur = useCallback(() => {
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current)
+      debounceRef.current = null
+    }
+    saveNote(content)
+  }, [content, saveNote])
+
   // Delete note
   const handleDelete = async () => {
     if (!window.confirm('Delete this note permanently?')) return
@@ -176,7 +186,7 @@ export function UserNotes({ sessionId, userId }: UserNotesProps) {
               <Textarea
                 value={content}
                 onChange={handleChange}
-                onBlur={() => void saveNote(content)}
+                onBlur={handleBlur}
                 placeholder="Write your personal notes for this session..."
                 className="min-h-32 resize-y"
                 maxLength={CHARACTER_LIMIT}

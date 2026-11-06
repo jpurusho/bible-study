@@ -40,10 +40,6 @@ export function ServiceWorkerRegister() {
       .then((registration) => registration.update())
       .catch((error) => console.error('Service worker recovery failed', error))
 
-    if ('caches' in window) {
-      caches.keys().then((keys) => Promise.all(keys.map((key) => caches.delete(key))))
-    }
-
     return () => navigator.serviceWorker.removeEventListener('message', handleMessage)
   }, [])
 

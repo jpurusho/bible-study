@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef, useEffect, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -31,9 +31,79 @@ export function SessionEditor({ session, initialMedia }: SessionEditorProps) {
   const [publishing, setPublishing] = useState(false)
   const [markdownDialogOpen, setMarkdownDialogOpen] = useState(false)
   const [markdownInput, setMarkdownInput] = useState('')
-  const supabase = createClient()
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
+  const supabase = useMemo(() => createClient(), [])
+
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const savedContentRef = useRef(session.content ?? '')
+  const isMountedRef = useRef(false)
+
+  // On mount: check for saved draft and offer restore via toast
+  useEffect(() => {
+    const draftKey = `admin-draft-${session.id}`
+    const draft = localStorage.getItem(draftKey)
+    if (draft && draft !== (session.content ?? '')) {
+      toast('Draft available', {
+        description: 'Unsaved draft found from a previous session. Restore it?',
+        action: {
+          label: 'Restore',
+          onClick: () => {
+            setContent(draft)
+            toast.success('Draft restored')
+          },
+        },
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session.id])
+
+  // Autosave + localStorage draft backup whenever content changes
+  useEffect(() => {
+    // Skip the initial render — savedContentRef already equals session.content
+    if (!isMountedRef.current) {
+      isMountedRef.current = true
+      return
+    }
+
+    localStorage.setItem(`admin-draft-${session.id}`, content)
+    setHasUnsavedChanges(content !== savedContentRef.current)
+
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
+    saveTimerRef.current = setTimeout(async () => {
+      const { error } = await supabase
+        .from('sessions')
+        .update({ content, updated_at: new Date().toISOString() })
+        .eq('id', session.id)
+      if (!error) {
+        savedContentRef.current = content
+        setHasUnsavedChanges(false)
+        localStorage.removeItem(`admin-draft-${session.id}`)
+      }
+    }, 30000)
+
+    return () => {
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
+    }
+  }, [content, session.id, supabase])
+
+  // Warn before leaving the page when there are unsaved changes
+  useEffect(() => {
+    const handler = (e: BeforeUnloadEvent) => {
+      if (content !== savedContentRef.current) {
+        e.preventDefault()
+        return ''
+      }
+    }
+    window.addEventListener('beforeunload', handler)
+    return () => window.removeEventListener('beforeunload', handler)
+  }, [content])
 
   const handleSaveContent = useCallback(async () => {
+    // Cancel pending autosave — manual save takes over
+    if (saveTimerRef.current) {
+      clearTimeout(saveTimerRef.current)
+      saveTimerRef.current = null
+    }
     setSaving(true)
     const { error } = await supabase
       .from('sessions')
@@ -43,6 +113,9 @@ export function SessionEditor({ session, initialMedia }: SessionEditorProps) {
     if (error) {
       toast.error(error.message)
     } else {
+      savedContentRef.current = content
+      setHasUnsavedChanges(false)
+      localStorage.removeItem(`admin-draft-${session.id}`)
       toast.success('Content saved')
     }
     setSaving(false)
@@ -181,7 +254,6 @@ export function SessionEditor({ session, initialMedia }: SessionEditorProps) {
           <div className="flex flex-wrap items-center gap-2">
             <ImageToContent
               sessionTitle={session.title}
-              bookContext="Acts of the Apostles Bible study"
               onGenerated={(html) => {
                 if (content && !confirm('Replace current content with AI-generated notes?')) return
                 setContent(html)
@@ -209,6 +281,9 @@ export function SessionEditor({ session, initialMedia }: SessionEditorProps) {
               <Megaphone className="size-4" />
               {publishing ? 'Publishing...' : 'Publish & Announce'}
             </Button>
+            <span className={`text-xs ${hasUnsavedChanges ? 'text-amber-600 dark:text-amber-400' : 'text-green-600 dark:text-green-400'}`}>
+              {hasUnsavedChanges ? 'Unsaved changes' : 'Saved'}
+            </span>
             <Button onClick={handleSaveContent} disabled={saving}>
               <Save className="size-4" />
               {saving ? 'Saving...' : 'Save'}
