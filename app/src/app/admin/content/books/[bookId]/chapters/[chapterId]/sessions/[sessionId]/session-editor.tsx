@@ -1,18 +1,23 @@
 'use client'
 
 import { useState, useCallback } from 'react'
+import dynamic from 'next/dynamic'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
-import { TiptapEditor } from '@/components/editor/tiptap-editor'
 import { ImageToContent } from '@/components/editor/image-to-content'
 import { Save, Plus, Trash2, Video, Music, Image as ImageIcon, FileText, Code, Eye, EyeOff, Megaphone, Upload } from 'lucide-react'
 import { toast } from 'sonner'
 import { markdownToHtml } from '@/lib/markdown-to-html'
 import type { Database } from '@/types/database'
+
+const TiptapEditor = dynamic(
+  () => import('@/components/editor/tiptap-editor').then(m => ({ default: m.TiptapEditor })),
+  { ssr: false, loading: () => <div className="min-h-[400px] border border-border rounded-lg bg-muted/30 animate-pulse" /> }
+)
 
 type Session = Database['public']['Tables']['sessions']['Row']
 type SessionMedia = Database['public']['Tables']['session_media']['Row']

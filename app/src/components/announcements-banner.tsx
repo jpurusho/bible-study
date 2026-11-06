@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useMemo, useState, useCallback } from 'react'
 import { X, Info, AlertTriangle, AlertCircle } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
@@ -52,8 +52,9 @@ export function AnnouncementsBanner({ userId }: AnnouncementsBannerProps) {
   const [dismissing, setDismissing] = useState(false)
   const [visible, setVisible] = useState(false)
 
+  const supabase = useMemo(() => createClient(), [])
+
   const fetchAnnouncements = useCallback(async () => {
-    const supabase = createClient()
     const now = new Date().toISOString()
 
     // Fetch active announcements
@@ -85,12 +86,11 @@ export function AnnouncementsBanner({ userId }: AnnouncementsBannerProps) {
       // Trigger animation in
       requestAnimationFrame(() => setVisible(true))
     }
-  }, [userId])
+  }, [userId, supabase])
 
   useEffect(() => {
-    void fetchAnnouncements()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userId])
+    fetchAnnouncements().catch(err => console.error('Failed to load announcements', err))
+  }, [fetchAnnouncements])
 
   const handleDismiss = async () => {
     if (!announcement) return
@@ -101,7 +101,6 @@ export function AnnouncementsBanner({ userId }: AnnouncementsBannerProps) {
     // Wait for animation out
     await new Promise((resolve) => setTimeout(resolve, 300))
 
-    const supabase = createClient()
     await supabase.from('announcement_dismissals').insert({
       announcement_id: announcement.id,
       user_id: userId,

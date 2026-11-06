@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
@@ -67,7 +67,7 @@ export function DiscussionThread({ sessionId, userId, userRole }: DiscussionThre
   const [replyContent, setReplyContent] = useState('')
   const [replySubmitting, setReplySubmitting] = useState(false)
 
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
 
   const fetchPosts = useCallback(async () => {
     const { data, error } = await supabase
@@ -107,8 +107,7 @@ export function DiscussionThread({ sessionId, userId, userRole }: DiscussionThre
 
   useEffect(() => {
     void fetchPosts()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sessionId])
+  }, [fetchPosts])
 
   async function handleSubmitComment() {
     const trimmed = newComment.trim()

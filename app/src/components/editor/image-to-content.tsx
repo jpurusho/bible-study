@@ -59,33 +59,21 @@ export function ImageToContent({ sessionTitle, bookContext, onGenerated }: Image
       return
     }
     setUploading(true)
-    setProgress('Uploading images...')
-
+    setProgress(`Uploading ${files.length} image${files.length > 1 ? 's' : ''}...`)
     const uploadedPaths: string[] = []
 
     try {
-      for (let i = 0; i < files.length; i++) {
-        setProgress(`Uploading image ${i + 1} of ${files.length}...`)
-        const file = files[i]
-        const ext = file.name.split('.').pop() || 'jpg'
-        const path = `${user.id}/${crypto.randomUUID()}_${i}.${ext}`
-
-        const { error } = await supabase.storage
-          .from('temp-uploads')
-          .upload(path, file)
-
-        if (error) {
-          toast.error(`Failed to upload ${file.name}: ${error.message}`)
-          // Clean up any already uploaded
-          if (uploadedPaths.length > 0) {
-            await supabase.storage.from('temp-uploads').remove(uploadedPaths)
-          }
-          setUploading(false)
-          setProgress('')
-          return
-        }
-        uploadedPaths.push(path)
-      }
+      await Promise.all(
+        files.map(async (file, i) => {
+          const ext = file.name.split('.').pop() || 'jpg'
+          const path = `${user.id}/${crypto.randomUUID()}_${i}.${ext}`
+          const { error } = await supabase.storage
+            .from('temp-uploads')
+            .upload(path, file)
+          if (error) throw new Error(`Failed to upload ${file.name}: ${error.message}`)
+          uploadedPaths.push(path)
+        })
+      )
 
       setUploading(false)
       setGenerating(true)
@@ -116,6 +104,9 @@ export function ImageToContent({ sessionTitle, bookContext, onGenerated }: Image
       setOpen(false)
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Something went wrong')
+      if (uploadedPaths.length > 0) {
+        await supabase.storage.from('temp-uploads').remove(uploadedPaths)
+      }
     } finally {
       setUploading(false)
       setGenerating(false)
