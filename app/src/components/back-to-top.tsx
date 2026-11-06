@@ -27,7 +27,7 @@ export function BackToTop() {
       data-slot="back-to-top"
       onClick={scrollToTop}
       className={cn(
-        'fixed bottom-6 right-6 z-40 rounded-full shadow-lg transition-opacity duration-200',
+        'fixed bottom-20 right-6 sm:bottom-6 sm:right-6 z-40 rounded-full shadow-lg transition-opacity duration-200',
         visible ? 'opacity-100' : 'opacity-0 pointer-events-none'
       )}
       aria-label="Back to top"

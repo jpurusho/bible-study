@@ -72,7 +72,7 @@ export default async function HomePage() {
       </section>
 
       {/* Continue Reading section */}
-      {recentProgress && (
+      {recentProgress?.sessions?.chapters?.books && (
         <section className="max-w-2xl mx-auto">
           <Link
             href={`/books/${recentProgress.sessions.chapters.books.slug}/${recentProgress.sessions.chapters.id}/${recentProgress.sessions.id}`}
