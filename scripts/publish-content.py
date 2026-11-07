@@ -95,6 +95,19 @@ CHAPTERS = [
             }
         ],
     },
+    {
+        "key": "acts-25",
+        "number": 25,
+        "title": "Paul Before Festus",
+        "description": "Acts 25 — Paul before Festus; God's sovereign purposes in Paul's imprisonment",
+        "sessions": [
+            {
+                "file": "content/acts/acts-25.md",
+                "title": "Paul in Caesarea, Part 2 — Paul Before Festus",
+                "scripture": "Acts 25:1-27",
+            }
+        ],
+    },
 ]
 
 # --- production id map ------------------------------------------------------
@@ -113,6 +126,8 @@ PROD_CHAPTER_IDS = {
     "acts-23": "20000000-0000-0000-0000-000000000023",
     # ...025 belongs to Reflections / God's Shaping Hand.
     "acts-24": "20000000-0000-0000-0000-000000000026",
+    # ...027 is the next sequential chapter id; verify in prod before running.
+    "acts-25": "20000000-0000-0000-0000-000000000027",
 }
 PROD_SESSION_IDS = {
     "acts-21/1": "30000000-0000-0000-0000-000000000034",
@@ -121,6 +136,8 @@ PROD_SESSION_IDS = {
     "acts-23/1": "30000000-0000-0000-0000-000000000037",
     # ...038 belongs to Reflections / When God Wants to Drill a Man.
     "acts-24/1": "30000000-0000-0000-0000-000000000039",
+    # ...040 is the next sequential session id; verify in prod before running.
+    "acts-25/1": "30000000-0000-0000-0000-000000000040",
 }
 
 # The pre-existing prod session under chapter 21 covers Acts 21:17-22:21 as one
