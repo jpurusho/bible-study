@@ -34,6 +34,11 @@ BOOK_ID      = "10000000-0000-0000-0000-000000000002"
 CHAPTER_ID   = "20000000-0000-0000-0000-000000000025"
 SESSION_ID   = "30000000-0000-0000-0000-000000000038"
 
+# Next available: chapter ...028, session ...041
+# (acts-24 uses ...026, acts-25 uses ...027; ...029+ reserved for future acts)
+CHAPTER_ID_2 = "20000000-0000-0000-0000-000000000028"
+SESSION_ID_2 = "30000000-0000-0000-0000-000000000041"
+
 # ── Content plan ─────────────────────────────────────────────────────────────
 CHAPTERS = [
     {
@@ -50,7 +55,22 @@ CHAPTERS = [
                 "number":    1,
             }
         ],
-    }
+    },
+    {
+        "id":           CHAPTER_ID_2,
+        "number":       2,
+        "title":        "The Herods and the Governors",
+        "description":  "Historical background — The Herod dynasty, Roman governors, and Nero in Acts and the Gospels",
+        "sessions": [
+            {
+                "id":        SESSION_ID_2,
+                "file":      "content/reflections/herods-and-governors.md",
+                "title":     "The Herods and the Governors: A Historical Companion to Acts",
+                "scripture": "Acts 12; 25-26",
+                "number":    1,
+            }
+        ],
+    },
 ]
 
 
