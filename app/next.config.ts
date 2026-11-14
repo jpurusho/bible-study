@@ -1,6 +1,5 @@
 import type { NextConfig } from "next"
-
-const { version } = require('./package.json') as { version: string }
+import { version } from './package.json'
 
 const nextConfig: NextConfig = {
   env: {
