@@ -108,6 +108,19 @@ CHAPTERS = [
             }
         ],
     },
+    {
+        "key": "acts-26",
+        "number": 26,
+        "title": "Paul Before Agrippa",
+        "description": "Acts 26 — Paul's evangelistic speech before Agrippa; nine principles for faithful witnesses",
+        "sessions": [
+            {
+                "file": "content/acts/acts-26.md",
+                "title": "Paul in Caesarea, Part 2 — Paul Before Agrippa",
+                "scripture": "Acts 26:1-32",
+            }
+        ],
+    },
 ]
 
 # --- production id map ------------------------------------------------------
@@ -128,6 +141,9 @@ PROD_CHAPTER_IDS = {
     "acts-24": "20000000-0000-0000-0000-000000000026",
     # ...027 is the next sequential chapter id; verify in prod before running.
     "acts-25": "20000000-0000-0000-0000-000000000027",
+    # ...028 belongs to Reflections / Herods and Governors.
+    # ...029 is the next sequential chapter id; verify in prod before running.
+    "acts-26": "20000000-0000-0000-0000-000000000029",
 }
 PROD_SESSION_IDS = {
     "acts-21/1": "30000000-0000-0000-0000-000000000034",
@@ -136,8 +152,10 @@ PROD_SESSION_IDS = {
     "acts-23/1": "30000000-0000-0000-0000-000000000037",
     # ...038 belongs to Reflections / When God Wants to Drill a Man.
     "acts-24/1": "30000000-0000-0000-0000-000000000039",
-    # ...040 is the next sequential session id; verify in prod before running.
+    # ...040 is acts-25/1; ...041 belongs to Reflections / Herods and Governors.
     "acts-25/1": "30000000-0000-0000-0000-000000000040",
+    # ...042 is the next sequential session id; verify in prod before running.
+    "acts-26/1": "30000000-0000-0000-0000-000000000042",
 }
 
 # The pre-existing prod session under chapter 21 covers Acts 21:17-22:21 as one
